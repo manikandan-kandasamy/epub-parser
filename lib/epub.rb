@@ -83,4 +83,25 @@ module EPUB
   def cover_image
     manifest.cover_image
   end
+
+  def search(query)
+    results = []
+    each_page_on_spine.with_index do |page, index|
+      begin
+        html = page.read
+      rescue => err
+        $stderr.puts err
+        next
+      end
+      results += search_from_html(query, html)
+    end
+    results
+  end
+
+  def search_from_html(query, html)
+    document = CFI::SearchResult.new(query)
+    parser = Nokogiri::XML::SAX::Parser.new(document)
+    parser.parse(html)
+    document.cfis
+  end
 end
