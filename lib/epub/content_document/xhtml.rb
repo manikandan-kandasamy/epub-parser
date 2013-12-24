@@ -58,7 +58,7 @@ module EPUB
             while pos
               pos = child.content.index(query, pos)
               if pos
-                result << [steps.dup, pos]
+                result << [steps.dup, {:position => pos, :index => text_index}]
                 pos += 1
               end
             end

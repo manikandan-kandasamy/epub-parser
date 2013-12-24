@@ -63,7 +63,7 @@ class TestContentDocument < Test::Unit::TestCase
           {:element => 'head', :index => 2},
           {:element => 'title', :index => 2}
         ],
-        9
+        {:position => 9, :index => 1}
       ],
       [
         [
@@ -74,7 +74,7 @@ class TestContentDocument < Test::Unit::TestCase
           {:element => 'hgroup', :index => 2},
           {:element => 'h1', :index => 4}
         ],
-        9
+        {:position => 9, :index => 1}
       ]
     ]
 
