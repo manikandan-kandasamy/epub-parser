@@ -50,4 +50,34 @@ class TestContentDocument < Test::Unit::TestCase
     stub(content_doc).read {'content'}
     assert_equal '', content_doc.title
   end
+
+  def test_search
+    item = EPUB::Publication::Package::Manifest::Item.new
+    stub(item).read {File.read(File.join(File.dirname(__FILE__), 'fixtures', 'book', 'OPS', 'nav.xhtml'))}
+    content_doc = XHTML.new
+    content_doc.item = item
+    expected = [
+      [
+        [
+          {:element => 'html', :index => 2},
+          {:element => 'head', :index => 2},
+          {:element => 'title', :index => 2}
+        ],
+        9
+      ],
+      [
+        [
+          {:element => 'html', :index => 2},
+          {:element => 'body', :index => 4},
+          {:element => 'div', :index => 2},
+          {:element => 'nav', :index => 2},
+          {:element => 'hgroup', :index => 2},
+          {:element => 'h1', :index => 4}
+        ],
+        9
+      ]
+    ]
+
+    assert_equal expected, content_doc.search('Content')
+  end
 end

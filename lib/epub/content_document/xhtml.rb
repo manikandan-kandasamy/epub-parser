@@ -36,6 +36,42 @@ module EPUB
       def nokogiri
         @nokogiri ||= Nokogiri.XML(raw_document)
       end
+
+      # @param query [String] search word
+      # @param element [Nokogiri::XML::Node, nil]
+      # @param steps [Array<Hash>]
+      # @return [Array<Array<Hash, Integer>>]
+      def search(query, element=nil, steps=[])
+        unless element
+          element = Nokogiri.XML(raw_document) {|config|
+            config.options = Nokogiri::XML::ParseOptions::NOENT | Nokogiri::XML::ParseOptions::NOCDATA
+          }
+        end
+        result = []
+        current_node = {}
+        text_index = -1
+        elem_index = 0
+        element.children.each do |child|
+          case child.type
+          when Nokogiri::XML::Node::TEXT_NODE
+            text_index = elem_index + 1
+            pos = 0
+            while pos
+              pos = child.content.index(query, pos)
+              if pos
+                result << [steps.dup, pos]
+                pos += 1
+              end
+            end
+          when Nokogiri::XML::Node::ELEMENT_NODE
+            elem_index += 2
+            next_steps = steps.dup
+            next_steps << {:element => child.node_name, :index => elem_index}
+            result += search(query, child, next_steps)
+          end
+        end
+        result
+      end
     end
   end
 end
