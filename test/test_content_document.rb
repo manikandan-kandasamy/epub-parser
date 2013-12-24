@@ -59,20 +59,20 @@ class TestContentDocument < Test::Unit::TestCase
     expected = [
       [
         [
-          {:element => 'html', :index => 2},
-          {:element => 'head', :index => 2},
-          {:element => 'title', :index => 2}
+          {:element => 'html', :index => 2, :id => nil},
+          {:element => 'head', :index => 2, :id => nil},
+          {:element => 'title', :index => 2, :id => nil}
         ],
         {:position => 9, :index => 1}
       ],
       [
         [
-          {:element => 'html', :index => 2},
-          {:element => 'body', :index => 4},
-          {:element => 'div', :index => 2},
-          {:element => 'nav', :index => 2},
-          {:element => 'hgroup', :index => 2},
-          {:element => 'h1', :index => 4}
+          {:element => 'html', :index => 2, :id => nil},
+          {:element => 'body', :index => 4, :id => nil},
+          {:element => 'div', :index => 2, :id => nil},
+          {:element => 'nav', :index => 2, :id => 'idid'},
+          {:element => 'hgroup', :index => 2, :id => nil},
+          {:element => 'h1', :index => 4, :id => nil}
         ],
         {:position => 9, :index => 1}
       ]

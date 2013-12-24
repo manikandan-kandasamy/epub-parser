@@ -65,7 +65,7 @@ module EPUB
           when Nokogiri::XML::Node::ELEMENT_NODE
             elem_index += 2
             next_steps = steps.dup
-            next_steps << {:element => child.node_name, :index => elem_index}
+            next_steps << {:element => child.node_name, :index => elem_index, :id => child['id']}
             result += search(query, child, next_steps)
           end
         end
