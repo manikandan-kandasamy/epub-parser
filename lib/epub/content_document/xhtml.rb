@@ -48,7 +48,6 @@ module EPUB
           }
         end
         result = []
-        current_node = {}
         text_index = -1
         elem_index = 0
         element.children.each do |child|
