@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 require_relative 'helper'
+require 'epub/cfi'
 
 class TestContentDocument < Test::Unit::TestCase
   include EPUB::ContentDocument
@@ -76,7 +77,16 @@ class TestContentDocument < Test::Unit::TestCase
         ],
         {:position => 9, :index => 1}
       ]
-    ]
+    ].map {|(elements, character_offset)|
+      cfi = EPUB::CFI.new
+      cfi.steps.concat elements.map {|elem|
+        [:element, :index, :id].each_with_object(EPUB::CFI::Step.new) {|attr, step|
+          step.__send__ "#{attr}=", elem[attr]
+        }
+      }
+      cfi.steps << EPUB::CFI::Step.new.tap {|step| step.index = character_offset[:index]; step.character_offset = character_offset[:position]}
+      cfi
+    }
 
     assert_equal expected, content_doc.search('Content')
   end

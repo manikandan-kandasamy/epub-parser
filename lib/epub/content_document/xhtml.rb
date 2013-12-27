@@ -1,3 +1,5 @@
+require 'epub/cfi'
+
 module EPUB
   module ContentDocument
     class XHTML
@@ -58,7 +60,19 @@ module EPUB
             while pos
               pos = child.content.index(query, pos)
               if pos
-                result << [steps.dup, {:position => pos, :index => text_index}]
+                cfi = CFI.new
+                steps.each do |step_info|
+                  step = CFI::Step.new
+                  CFI::Step::ATTRIBUTES.each do |attr|
+                    step.__send__ "#{attr}=", step_info[attr]
+                  end
+                  cfi.steps << step
+                end
+                step = CFI::Step.new
+                step.index = text_index
+                step.character_offset = pos
+                cfi.steps << step
+                result << cfi
                 pos += 1
               end
             end
