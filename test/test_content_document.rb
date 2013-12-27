@@ -59,28 +59,23 @@ class TestContentDocument < Test::Unit::TestCase
     content_doc.item = item
     expected = [
       [
-        [
-          {:element => 'html', :index => 2, :id => nil},
-          {:element => 'head', :index => 2, :id => nil},
-          {:element => 'title', :index => 2, :id => nil}
-        ],
-        {:character_offset => 9, :index => 1}
+        EPUB::CFI::Step.new(element: 'html', index: 2, id: nil),
+        EPUB::CFI::Step.new(element: 'head', index: 2, id: nil),
+        EPUB::CFI::Step.new(element: 'title', index: 2, id: nil),
+        EPUB::CFI::Step.new(character_offset: 9, index: 1)
       ],
       [
-        [
-          {:element => 'html', :index => 2, :id => nil},
-          {:element => 'body', :index => 4, :id => nil},
-          {:element => 'div', :index => 2, :id => nil},
-          {:element => 'nav', :index => 2, :id => 'idid'},
-          {:element => 'hgroup', :index => 2, :id => nil},
-          {:element => 'h1', :index => 4, :id => nil}
-        ],
-        {:character_offset => 9, :index => 1}
+        EPUB::CFI::Step.new(element: 'html', index: 2, id: nil),
+        EPUB::CFI::Step.new(element: 'body', index: 4, id: nil),
+        EPUB::CFI::Step.new(element: 'div', index: 2, id: nil),
+        EPUB::CFI::Step.new(element: 'nav', index: 2, id: 'idid'),
+        EPUB::CFI::Step.new(element: 'hgroup', index: 2, id: nil),
+        EPUB::CFI::Step.new(element: 'h1', index: 4, id: nil),
+        EPUB::CFI::Step.new(character_offset: 9, index: 1)
       ]
-    ].map {|(elements, character_offset)|
+    ].map {|elements|
       cfi = EPUB::CFI.new
-      cfi.steps.concat elements.map {|elem| EPUB::CFI::Step.new(elem)}
-      cfi.steps << EPUB::CFI::Step.new(character_offset)
+      cfi.steps.concat elements
       cfi
     }
 
