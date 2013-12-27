@@ -64,7 +64,7 @@ class TestContentDocument < Test::Unit::TestCase
           {:element => 'head', :index => 2, :id => nil},
           {:element => 'title', :index => 2, :id => nil}
         ],
-        {:position => 9, :index => 1}
+        {:character_offset => 9, :index => 1}
       ],
       [
         [
@@ -75,16 +75,12 @@ class TestContentDocument < Test::Unit::TestCase
           {:element => 'hgroup', :index => 2, :id => nil},
           {:element => 'h1', :index => 4, :id => nil}
         ],
-        {:position => 9, :index => 1}
+        {:character_offset => 9, :index => 1}
       ]
     ].map {|(elements, character_offset)|
       cfi = EPUB::CFI.new
-      cfi.steps.concat elements.map {|elem|
-        [:element, :index, :id].each_with_object(EPUB::CFI::Step.new) {|attr, step|
-          step.__send__ "#{attr}=", elem[attr]
-        }
-      }
-      cfi.steps << EPUB::CFI::Step.new.tap {|step| step.index = character_offset[:index]; step.character_offset = character_offset[:position]}
+      cfi.steps.concat elements.map {|elem| EPUB::CFI::Step.new(elem)}
+      cfi.steps << EPUB::CFI::Step.new(character_offset)
       cfi
     }
 
