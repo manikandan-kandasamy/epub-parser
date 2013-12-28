@@ -52,7 +52,7 @@ class TestContentDocument < Test::Unit::TestCase
     assert_equal '', content_doc.title
   end
 
-  def test_search
+  def test_search_simple
     item = EPUB::Publication::Package::Manifest::Item.new
     stub(item).read {File.read(File.join(File.dirname(__FILE__), 'fixtures', 'book', 'OPS', 'search.xhtml'))}
     content_doc = XHTML.new
