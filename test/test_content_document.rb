@@ -103,6 +103,10 @@ class TestContentDocument < Test::Unit::TestCase
       assert_equal expected, @content_doc.search('an em').first
     end
 
+    def test_not_stepping_over_tag
+      assert_empty @content_doc.search("仮名がな")
+    end
+
     def test_img
       expected = [
         EPUB::CFI::Step.new(element: 'html', index: 2),

@@ -3,6 +3,9 @@ require 'epub/cfi'
 module EPUB
   module ContentDocument
     class XHTML
+      TEXT_LEVEL_SEMANTICS = %w[a em strong small s cite q dfn abbr data time code var samp kbd sub sup i b u mark ruby rt rp bdi bdo span br wbr]
+      STEPPING_OVER_ELEMENTS = TEXT_LEVEL_SEMANTICS - %w[rt rp br]
+
       attr_accessor :item
 
       # @return [String] Returns the content string.
@@ -88,7 +91,7 @@ module EPUB
               result << result_steps
             end
 
-            if stepping_over_subquery
+            if stepping_over_subquery and STEPPING_OVER_ELEMENTS.include? child.node_name
               child_result = search(stepping_over_subquery, child, [])
               unless child_result.empty?
                 result_steps = steps.map {|step_info| CFI::Step.new(step_info)}
