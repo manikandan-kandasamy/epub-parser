@@ -84,5 +84,16 @@ class TestContentDocument < Test::Unit::TestCase
 
       assert_equal expected, @content_doc.search('search')
     end
+
+    def test_text_after_child_element
+      expected = [
+        EPUB::CFI::Step.new(element: 'html', index: 2),
+        EPUB::CFI::Step.new(element: 'body', index: 4),
+        EPUB::CFI::Step.new(element: 'p', index: 4),
+        EPUB::CFI::Step.new(character_offset: 6, index: 3),
+      ]
+
+      assert_equal expected, @content_doc.search('paragraph').first.steps
+    end
   end
 end
