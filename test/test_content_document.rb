@@ -96,6 +96,17 @@ class TestContentDocument < Test::Unit::TestCase
       assert_equal expected, @content_doc.search('paragraph').first.steps
     end
 
+    def test_stepping_over_tag
+      expected = [
+        EPUB::CFI::Step.new(element: 'html', index: 2),
+        EPUB::CFI::Step.new(element: 'body', index: 4),
+        EPUB::CFI::Step.new(element: 'p', index: 4),
+        EPUB::CFI::Step.new(character_offset: 8, index: 1)
+      ]
+
+      assert_equal expected, @content_doc.search('an em').first.steps
+    end
+
     def test_img
       expected = [
         EPUB::CFI::Step.new(element: 'html', index: 2),

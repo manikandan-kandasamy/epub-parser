@@ -52,6 +52,8 @@ module EPUB
         result = []
         text_index = -1
         elem_index = 0
+        stepping_over_subquery = nil
+        stepping_over_offset = nil
         element.children.each do |child|
           case child.type
           when Nokogiri::XML::Node::TEXT_NODE
@@ -68,6 +70,16 @@ module EPUB
                 pos += 1
               end
             end
+
+            offset = 2
+            until (subquery = query[0..-offset]).to_s.empty? or (subcontent = content[(content.length - offset)..-1]).to_s.empty?
+              if subquery == subcontent
+                stepping_over_subquery = subquery
+                stepping_over_offset = content.length - offset
+                break
+              end
+              offset += 1
+            end
           when Nokogiri::XML::Node::ELEMENT_NODE
             elem_index += 2
             if child.node_name == 'img' and child['alt'].index(query)
@@ -78,7 +90,17 @@ module EPUB
             end
             next_steps = steps.dup
             next_steps << {:element => child.node_name, :index => elem_index, :id => child['id']}
-            result += search(query, child, next_steps)
+            if stepping_over_subquery
+              child_result = search(stepping_over_subquery, child, next_steps)
+              cfi = CFI.new
+              cfi.steps = steps.map {|step_info| CFI::Step.new(step_info)}
+              cfi.steps << CFI::Step.new(character_offset: stepping_over_offset, index: text_index)
+              result << cfi
+            else
+              result.concat search(query, child, next_steps)
+            end
+            stepping_over_subquery = nil
+            stepping_over_offset = nil
           end
         end
         result
