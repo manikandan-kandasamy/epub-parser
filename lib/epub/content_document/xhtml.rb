@@ -42,7 +42,7 @@ module EPUB
       # @param query [String] search word
       # @param element [Nokogiri::XML::Node, nil]
       # @param steps [Array<Hash>]
-      # @return [Array<Array<Hash, Integer>>]
+      # @return [Array<CFI>] start points of found search word
       def search(query, element=nil, steps=[])
         unless element
           element = Nokogiri.XML(raw_document) {|config|
