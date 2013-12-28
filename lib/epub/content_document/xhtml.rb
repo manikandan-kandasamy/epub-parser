@@ -70,14 +70,15 @@ module EPUB
               end
             end
 
-            offset = 2
-            until (subquery = query[0..-offset]).to_s.empty? or (subcontent = content[(content.length - offset)..-1]).to_s.empty?
+            sublength = query.length - 1
+            until (subquery = query[0, sublength]).to_s.empty?
+              subcontent = content[-sublength..-1]
               if subquery == subcontent
-                stepping_over_subquery = subquery
-                stepping_over_offset = content.length - offset
+                stepping_over_subquery = query[sublength..-1]
+                stepping_over_offset = content.length - sublength
                 break
               end
-              offset += 1
+              sublength -= 1
             end
           when Nokogiri::XML::Node::ELEMENT_NODE
             elem_index += 2
@@ -86,14 +87,17 @@ module EPUB
               result_steps << CFI::Step.new(element: 'img', index: elem_index, id: child['id'])
               result << result_steps
             end
-            next_steps = steps.dup
-            next_steps << {:element => child.node_name, :index => elem_index, :id => child['id']}
+
             if stepping_over_subquery
-              child_result = search(stepping_over_subquery, child, next_steps)
-              result_steps = steps.map {|step_info| CFI::Step.new(step_info)}
-              result_steps << CFI::Step.new(character_offset: stepping_over_offset, index: text_index)
-              result << result_steps
+              child_result = search(stepping_over_subquery, child, [])
+              unless child_result.empty?
+                result_steps = steps.map {|step_info| CFI::Step.new(step_info)}
+                result_steps << CFI::Step.new(character_offset: stepping_over_offset, index: text_index)
+                result << result_steps
+              end
             else
+              next_steps = steps.dup
+              next_steps << {:element => child.node_name, :index => elem_index, :id => child['id']}
               result.concat search(query, child, next_steps)
             end
             stepping_over_subquery = nil
