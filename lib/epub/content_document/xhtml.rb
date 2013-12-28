@@ -57,8 +57,9 @@ module EPUB
           when Nokogiri::XML::Node::TEXT_NODE
             text_index = elem_index + 1
             pos = 0
+            content = child.content
             while pos
-              pos = child.content.index(query, pos)
+              pos = content.index(query, pos)
               if pos
                 cfi = CFI.new
                 cfi.steps = steps.map {|step_info| CFI::Step.new(step_info)}
