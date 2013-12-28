@@ -95,5 +95,16 @@ class TestContentDocument < Test::Unit::TestCase
 
       assert_equal expected, @content_doc.search('paragraph').first.steps
     end
+
+    def test_img
+      expected = [
+        EPUB::CFI::Step.new(element: 'html', index: 2),
+        EPUB::CFI::Step.new(element: 'body', index: 4),
+        EPUB::CFI::Step.new(element: 'p', index: 6),
+        EPUB::CFI::Step.new(element: 'img', index: 2)
+      ]
+
+      assert_equal expected, @content_doc.search('image').first.steps
+    end
   end
 end

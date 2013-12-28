@@ -69,6 +69,12 @@ module EPUB
             end
           when Nokogiri::XML::Node::ELEMENT_NODE
             elem_index += 2
+            if child.node_name == 'img' and child['alt'].index(query)
+              cfi = CFI.new
+              cfi.steps = steps.map {|step_info| CFI::Step.new(step_info)}
+              cfi.steps << CFI::Step.new(element: 'img', index: elem_index, id: child['id'])
+              result << cfi
+            end
             next_steps = steps.dup
             next_steps << {:element => child.node_name, :index => elem_index, :id => child['id']}
             result += search(query, child, next_steps)
