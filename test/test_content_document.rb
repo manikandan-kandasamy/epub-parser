@@ -54,7 +54,7 @@ class TestContentDocument < Test::Unit::TestCase
 
   def test_search
     item = EPUB::Publication::Package::Manifest::Item.new
-    stub(item).read {File.read(File.join(File.dirname(__FILE__), 'fixtures', 'book', 'OPS', 'nav.xhtml'))}
+    stub(item).read {File.read(File.join(File.dirname(__FILE__), 'fixtures', 'book', 'OPS', 'search.xhtml'))}
     content_doc = XHTML.new
     content_doc.item = item
     expected = [
@@ -62,16 +62,14 @@ class TestContentDocument < Test::Unit::TestCase
         EPUB::CFI::Step.new(element: 'html', index: 2, id: nil),
         EPUB::CFI::Step.new(element: 'head', index: 2, id: nil),
         EPUB::CFI::Step.new(element: 'title', index: 2, id: nil),
-        EPUB::CFI::Step.new(character_offset: 9, index: 1)
+        EPUB::CFI::Step.new(character_offset: 20, index: 1)
       ],
       [
         EPUB::CFI::Step.new(element: 'html', index: 2, id: nil),
         EPUB::CFI::Step.new(element: 'body', index: 4, id: nil),
-        EPUB::CFI::Step.new(element: 'div', index: 2, id: nil),
-        EPUB::CFI::Step.new(element: 'nav', index: 2, id: 'idid'),
-        EPUB::CFI::Step.new(element: 'hgroup', index: 2, id: nil),
-        EPUB::CFI::Step.new(element: 'h1', index: 4, id: nil),
-        EPUB::CFI::Step.new(character_offset: 9, index: 1)
+        EPUB::CFI::Step.new(element: 'h1', index: 2, id: nil),
+        EPUB::CFI::Step.new(element: 'em', index: 2, id: nil),
+        EPUB::CFI::Step.new(character_offset: 0, index: 1)
       ]
     ].map {|elements|
       cfi = EPUB::CFI.new
@@ -79,6 +77,6 @@ class TestContentDocument < Test::Unit::TestCase
       cfi
     }
 
-    assert_equal expected, content_doc.search('Content')
+    assert_equal expected, content_doc.search('search')
   end
 end
