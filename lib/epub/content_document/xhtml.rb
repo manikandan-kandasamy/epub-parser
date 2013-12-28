@@ -61,17 +61,8 @@ module EPUB
               pos = child.content.index(query, pos)
               if pos
                 cfi = CFI.new
-                steps.each do |step_info|
-                  step = CFI::Step.new
-                  CFI::Step::ATTRIBUTES.each do |attr|
-                    step.__send__ "#{attr}=", step_info[attr]
-                  end
-                  cfi.steps << step
-                end
-                step = CFI::Step.new
-                step.index = text_index
-                step.character_offset = pos
-                cfi.steps << step
+                cfi.steps = steps.map {|step_info| CFI::Step.new(step_info)}
+                cfi.steps << CFI::Step.new(index: text_index, character_offset: pos)
                 result << cfi
                 pos += 1
               end
