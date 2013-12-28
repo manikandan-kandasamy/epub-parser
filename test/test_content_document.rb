@@ -76,11 +76,7 @@ class TestContentDocument < Test::Unit::TestCase
           EPUB::CFI::Step.new(element: 'em', index: 2, id: nil),
           EPUB::CFI::Step.new(character_offset: 0, index: 1)
         ]
-      ].map {|elements|
-        cfi = EPUB::CFI.new
-        cfi.steps.concat elements
-        cfi
-      }
+      ]
 
       assert_equal expected, @content_doc.search('search')
     end
@@ -93,7 +89,7 @@ class TestContentDocument < Test::Unit::TestCase
         EPUB::CFI::Step.new(character_offset: 6, index: 3),
       ]
 
-      assert_equal expected, @content_doc.search('paragraph').first.steps
+      assert_equal expected, @content_doc.search('paragraph').first
     end
 
     def test_stepping_over_tag
@@ -104,7 +100,7 @@ class TestContentDocument < Test::Unit::TestCase
         EPUB::CFI::Step.new(character_offset: 8, index: 1)
       ]
 
-      assert_equal expected, @content_doc.search('an em').first.steps
+      assert_equal expected, @content_doc.search('an em').first
     end
 
     def test_img
@@ -115,7 +111,7 @@ class TestContentDocument < Test::Unit::TestCase
         EPUB::CFI::Step.new(element: 'img', index: 2)
       ]
 
-      assert_equal expected, @content_doc.search('image').first.steps
+      assert_equal expected, @content_doc.search('image').first
     end
   end
 end
