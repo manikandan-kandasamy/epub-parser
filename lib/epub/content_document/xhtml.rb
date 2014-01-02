@@ -73,7 +73,6 @@ module EPUB
 
               pos = 0
               content = node.content
-              # BUG: When searching "ab" from "ababababa"
               while pos
                 pos = content.index(@query, pos)
                 if pos
