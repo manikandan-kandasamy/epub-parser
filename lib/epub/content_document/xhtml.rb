@@ -66,13 +66,14 @@ module EPUB
           results = []
           text_index = -1
           elem_index = 0
-          element.children.each do |node|
+          element.children.each_with_index do |node, node_index|
             case node.type
             when Nokogiri::XML::Node::TEXT_NODE
               text_index = elem_index + 1
 
               pos = 0
               content = node.content
+              # BUG: When searching "ab" from "ababababa"
               while pos
                 pos = content.index(@query, pos)
                 if pos
@@ -82,14 +83,22 @@ module EPUB
                 end
               end
 
-              @stepping_over_length = get_stepping_over_length(content)
+              if @stepping_over_length and node_index == 0 # TODO: Make stepping over start tag and end tag different
+                subquery = @query[@stepping_over_length..-1]
+                if content.index(subquery) == 0
+                  results << [CFI::Step.new(character_offset: @stepping_over_offset, index: @stepping_over_index)]
+                end
+              end
+
+              @stepping_over_length, @stepping_over_offset = detect_stepping_over(content)
+              @stepping_over_index = text_index if @stepping_over_length
             when Nokogiri::XML::Node::ELEMENT_NODE
               elem_index += 2
 
               if node.node_name == 'img' and node['alt'].index(@query)
                 result_steps = [CFI::Step.new(element: element.node_name, index: element_index, id: element['id']), CFI::Step.new(element: node.node_name, index: elem_index, id: node['id'])]
                 results << result_steps
-                @stepping_over_length = nil
+                @stepping_over_length = @stepping_over_offset = @stepping_over_index = nil
               end
 
               results.concat search(node, elem_index).map {|result|
@@ -100,23 +109,24 @@ module EPUB
                 end
               }
 
-              @stepping_over_length = nil
+              @stepping_over_length = @stepping_over_offset = @stepping_over_index = nil
             end
           end
           results
         end
 
-        def get_stepping_over_length(content)
-          return @query.length > 1
+        def detect_stepping_over(content)
+          return unless @query.length > 1
           content_length = content.length
           (@query.length - 1).downto 1 do |sublength|
             subquery = @query[0, sublength] # TODO: Cache it
             offset = content_length - sublength
             subcontent = content[offset..-1]
             if subquery == subcontent
-              return sublength
+              return sublength, offset
             end
           end
+          nil
         end
       end
     end
