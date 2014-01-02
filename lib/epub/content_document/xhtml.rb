@@ -60,6 +60,7 @@ module EPUB
 
         def initialize(query)
           @query = query
+          @stepping_over_length = @stepping_over_offset = @stepping_over_index = nil
         end
 
         def search(element, element_index)
