@@ -64,13 +64,11 @@ class TestContentDocument < Test::Unit::TestCase
     def test_search_simple
       expected = [
         [
-          EPUB::CFI::Step.new(element: 'html', index: 2, id: nil),
           EPUB::CFI::Step.new(element: 'head', index: 2, id: nil),
           EPUB::CFI::Step.new(element: 'title', index: 2, id: nil),
           EPUB::CFI::Step.new(character_offset: 20, index: 1)
         ],
         [
-          EPUB::CFI::Step.new(element: 'html', index: 2, id: nil),
           EPUB::CFI::Step.new(element: 'body', index: 4, id: nil),
           EPUB::CFI::Step.new(element: 'h1', index: 2, id: nil),
           EPUB::CFI::Step.new(element: 'em', index: 2, id: nil),
@@ -83,7 +81,6 @@ class TestContentDocument < Test::Unit::TestCase
 
     def test_text_after_child_element
       expected = [
-        EPUB::CFI::Step.new(element: 'html', index: 2),
         EPUB::CFI::Step.new(element: 'body', index: 4),
         EPUB::CFI::Step.new(element: 'p', index: 4),
         EPUB::CFI::Step.new(character_offset: 6, index: 3),
@@ -94,7 +91,6 @@ class TestContentDocument < Test::Unit::TestCase
 
     def test_stepping_over_tag
       expected = [
-        EPUB::CFI::Step.new(element: 'html', index: 2),
         EPUB::CFI::Step.new(element: 'body', index: 4),
         EPUB::CFI::Step.new(element: 'p', index: 4),
         EPUB::CFI::Step.new(character_offset: 8, index: 1)
@@ -109,7 +105,6 @@ class TestContentDocument < Test::Unit::TestCase
 
     def test_img
       expected = [
-        EPUB::CFI::Step.new(element: 'html', index: 2),
         EPUB::CFI::Step.new(element: 'body', index: 4),
         EPUB::CFI::Step.new(element: 'p', index: 6),
         EPUB::CFI::Step.new(element: 'img', index: 2)

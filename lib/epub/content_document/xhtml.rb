@@ -53,7 +53,7 @@ module EPUB
         class << self
           def search(query, doc)
             element = doc.respond_to?(:root) ? doc.root : doc
-            new(query).search(element)
+            new(query).search(element, [])
           end
         end
 
@@ -61,8 +61,7 @@ module EPUB
           @query = query
         end
 
-        def search(element, steps=nil)
-          steps ||= [{:element => element.node_name, :index => 2, :id => element['id']}]
+        def search(element, steps)
           results = []
           text_index = -1
           elem_index = 0
