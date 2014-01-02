@@ -89,7 +89,7 @@ class TestContentDocument < Test::Unit::TestCase
       assert_equal expected, @content_doc.search('paragraph').first
     end
 
-    def test_stepping_over_tag
+    def test_stepping_over_start_tag
       expected = [
         EPUB::CFI::Step.new(element: 'body', index: 4),
         EPUB::CFI::Step.new(element: 'p', index: 4),
