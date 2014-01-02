@@ -101,7 +101,8 @@ module EPUB
                 @stepping_over_length = @stepping_over_offset = @stepping_over_index = nil
               end
 
-              results.concat search(node, elem_index).map {|result|
+              child_results = search(node, elem_index)
+              results.concat child_results.map {|result|
                 if element.name == ROOT_ELEMENT
                   result
                 else
