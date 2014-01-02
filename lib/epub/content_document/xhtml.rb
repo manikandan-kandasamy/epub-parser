@@ -82,7 +82,7 @@ module EPUB
                 end
               end
 
-              if @stepping_over_length and node_index == 0 # TODO: Make stepping over start tag and end tag different
+              if @stepping_over_length and node_index == 0 and STEPPING_OVER_ELEMENTS.include? element.node_name # TODO: Make stepping over start tag and end tag different
                 subquery = @query[@stepping_over_length..-1]
                 subcontent = content[0, @stepping_over_length]
                 if subquery == subcontent
