@@ -84,7 +84,8 @@ module EPUB
 
               if @stepping_over_length and node_index == 0 # TODO: Make stepping over start tag and end tag different
                 subquery = @query[@stepping_over_length..-1]
-                if content.index(subquery) == 0
+                subcontent = content[0, @stepping_over_length]
+                if subquery == subcontent
                   results << [CFI::Step.new(character_offset: @stepping_over_offset, index: @stepping_over_index)]
                 end
               end
