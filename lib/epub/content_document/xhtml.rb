@@ -3,9 +3,6 @@ require 'epub/cfi'
 module EPUB
   module ContentDocument
     class XHTML
-      TEXT_LEVEL_SEMANTICS = %w[a em strong small s cite q dfn abbr data time code var samp kbd sub sup i b u mark ruby rt rp bdi bdo span br wbr]
-      STEPPING_OVER_ELEMENTS = TEXT_LEVEL_SEMANTICS - %w[rt rp br]
-
       attr_accessor :item
 
       # @return [String] Returns the content string.
@@ -50,6 +47,8 @@ module EPUB
       end
 
       class Searcher
+        TEXT_LEVEL_SEMANTICS = %w[a em strong small s cite q dfn abbr data time code var samp kbd sub sup i b u mark ruby rt rp bdi bdo span br wbr]
+        STEPPING_OVER_ELEMENTS = TEXT_LEVEL_SEMANTICS - %w[rt rp br]
         ROOT_ELEMENT = 'html'
 
         class << self
