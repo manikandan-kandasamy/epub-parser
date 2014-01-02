@@ -63,7 +63,7 @@ module EPUB
           @stepping_over_length = @stepping_over_offset = @stepping_over_index = nil
         end
 
-        def search(element, element_index)
+        def search(element, element_index) # TODO: Define appropriate variable name for second argument
           results = []
           text_index = -1
           elem_index = 0
