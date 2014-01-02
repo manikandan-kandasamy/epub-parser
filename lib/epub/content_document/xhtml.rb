@@ -69,6 +69,7 @@ module EPUB
             case node.type
             when Nokogiri::XML::Node::TEXT_NODE
               text_index = elem_index + 1
+
               pos = 0
               content = node.content
               while pos
