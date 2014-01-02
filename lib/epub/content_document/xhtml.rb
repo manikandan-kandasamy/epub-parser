@@ -50,10 +50,12 @@ module EPUB
       end
 
       class Searcher
+        ROOT_ELEMENT = 'html'
+
         class << self
           def search(query, doc)
             element = doc.respond_to?(:root) ? doc.root : doc
-            new(query).search(element, [])
+            new(query).search(element, 2)
           end
         end
 
@@ -61,7 +63,7 @@ module EPUB
           @query = query
         end
 
-        def search(element, steps)
+        def search(element, element_index)
           results = []
           text_index = -1
           elem_index = 0
@@ -75,27 +77,45 @@ module EPUB
               while pos
                 pos = content.index(@query, pos)
                 if pos
-                  result_steps = steps.map {|step| CFI::Step.new(step)}
-                  result_steps << CFI::Step.new(index: text_index, character_offset: pos)
+                  result_steps = [CFI::Step.new(element: element.node_name, index: element_index, id: element['id']), CFI::Step.new(index: text_index, character_offset: pos)]
                   results << result_steps
                   pos += 1
                 end
               end
+
+              @stepping_over_offset = get_stepping_over_offset(content)
             when Nokogiri::XML::Node::ELEMENT_NODE
               elem_index += 2
 
               if node.node_name == 'img' and node['alt'].index(@query)
-                result_steps = steps.map {|step| CFI::Step.new(step)}
-                result_steps << CFI::Step.new(element: 'img', index: elem_index, id: node['id'])
+                result_steps = [CFI::Step.new(element: element.node_name, index: element_index, id: element['id']), CFI::Step.new(element: node.node_name, index: elem_index, id: node['id'])]
                 results << result_steps
+                @stepping_over_offset = nil
               end
 
-              next_steps = steps.dup
-              next_steps << {:element => node.node_name, :index => elem_index, :id => node['id']}
-              results.concat search(node, next_steps)
+              results.concat search(node, elem_index).map {|result|
+                if element.name == ROOT_ELEMENT
+                  result
+                else
+                  result.unshift(CFI::Step.new(element: element.name, index: element_index, id: element['id']))
+                end
+              }
             end
           end
           results
+        end
+
+        def get_stepping_over_offset(content)
+          return @query.length > 1
+          content_length = content.length
+          (@query.length - 1).downto 1 do |sublength|
+            subquery = @query[0, sublength] # TODO: Cache it
+            offset = content_length - sublength
+            subcontent = content[offset..-1]
+            if subquery == subcontent
+              return offset
+            end
+          end
         end
       end
     end
