@@ -103,10 +103,11 @@ class TestContentDocument < Test::Unit::TestCase
       expected = [
         EPUB::CFI::Step.new(element: 'body', index: 4),
         EPUB::CFI::Step.new(element: 'p', index: 4),
-        EPUB::CFI::Step.new(character_offset: 8, index: 1)
+        EPUB::CFI::Step.new(element: 'em', index: 2),
+        EPUB::CFI::Step.new(character_offset: 1, index: 1)
       ]
 
-      assert_equal expected, @content_doc.search('an em in').first
+      assert_equal expected, @content_doc.search('m in').first
     end
 
     def test_not_stepping_over_tag

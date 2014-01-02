@@ -83,11 +83,19 @@ module EPUB
                 end
               end
 
-              if @stepping_over_length and node_index == 0 and STEPPING_OVER_ELEMENTS.include? element.node_name # TODO: Make stepping over start tag and end tag different
+              if @stepping_over_length && node_index == 0 && STEPPING_OVER_ELEMENTS.include?(element.node_name) or
+                  @stepping_over_length && STEPPING_OVER_ELEMENTS.include?(@stepping_over_end_tag)
                 subquery = @query[@stepping_over_length..-1]
                 subcontent = content[0, subquery.length]
                 if subquery == subcontent
-                  results << [CFI::Step.new(character_offset: @stepping_over_offset, index: @stepping_over_index)]
+                  result = [CFI::Step.new(character_offset: @stepping_over_offset, index: @stepping_over_index)]
+                  if @stepping_over_end_tag
+                    result = [
+                      CFI::Step.new(element: element.node_name, index: element_index, id: element['id']),
+                      CFI::Step.new(element: @stepping_over_end_tag, index: @stepping_over_end_tag_index, id: @stepping_over_end_tag_id)
+                    ] + result
+                  end
+                  results << result
                 end
               end
 
@@ -110,8 +118,14 @@ module EPUB
                   result.unshift(CFI::Step.new(element: element.name, index: element_index, id: element['id']))
                 end
               }
-
-              @stepping_over_length = @stepping_over_offset = @stepping_over_index = nil
+              # TODO: what's happening if the child's last node is img, br or hr and so on?
+              if @stepping_over_length
+                @stepping_over_end_tag = node.node_name
+                @stepping_over_end_tag_index = elem_index
+                @stepping_over_end_tag_id = node['id']
+              else
+                @stepping_over_end_tag = @stepping_over_end_tag_index = @stepping_over_end_tag_id = nil
+              end
             end
           end
           results
