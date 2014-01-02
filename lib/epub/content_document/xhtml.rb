@@ -82,14 +82,14 @@ module EPUB
                 end
               end
 
-              @stepping_over_offset = get_stepping_over_offset(content)
+              @stepping_over_length = get_stepping_over_length(content)
             when Nokogiri::XML::Node::ELEMENT_NODE
               elem_index += 2
 
               if node.node_name == 'img' and node['alt'].index(@query)
                 result_steps = [CFI::Step.new(element: element.node_name, index: element_index, id: element['id']), CFI::Step.new(element: node.node_name, index: elem_index, id: node['id'])]
                 results << result_steps
-                @stepping_over_offset = nil
+                @stepping_over_length = nil
               end
 
               results.concat search(node, elem_index).map {|result|
@@ -99,12 +99,14 @@ module EPUB
                   result.unshift(CFI::Step.new(element: element.name, index: element_index, id: element['id']))
                 end
               }
+
+              @stepping_over_length = nil
             end
           end
           results
         end
 
-        def get_stepping_over_offset(content)
+        def get_stepping_over_length(content)
           return @query.length > 1
           content_length = content.length
           (@query.length - 1).downto 1 do |sublength|
@@ -112,7 +114,7 @@ module EPUB
             offset = content_length - sublength
             subcontent = content[offset..-1]
             if subquery == subcontent
-              return offset
+              return sublength
             end
           end
         end
