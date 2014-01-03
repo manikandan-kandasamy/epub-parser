@@ -110,6 +110,16 @@ class TestContentDocument < Test::Unit::TestCase
       assert_equal expected, @content_doc.search('m in').first
     end
 
+    def test_stepping_over_start_and_end_tag
+      expected = [
+        EPUB::CFI::Step.new(element: 'body', index: 4),
+        EPUB::CFI::Step.new(element: 'p', index: 4),
+        EPUB::CFI::Step.new(character_offset: 8, index: 1)
+      ]
+
+      assert_equal expected, @content_doc.search('an em in').first
+    end
+
     def test_not_stepping_over_tag
       assert_empty @content_doc.search("仮名がな")
     end
