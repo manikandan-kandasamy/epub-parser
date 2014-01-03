@@ -131,6 +131,8 @@ module EPUB
           results
         end
 
+        private
+
         def detect_stepping_over(content)
           return unless @query.length > 1
           content_length = content.length
