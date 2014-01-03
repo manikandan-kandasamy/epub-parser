@@ -102,8 +102,10 @@ module EPUB
               elem_index += 2
 
               if node.node_name == 'img' and node['alt'].index(@query)
-                result_steps = [CFI::Step.new(element: element.node_name, index: element_index, id: element['id']), CFI::Step.new(element: node.node_name, index: elem_index, id: node['id'])]
-                results << result_steps
+                results << [
+                  CFI::Step.new(element: element.node_name, index: element_index, id: element['id']),
+                  CFI::Step.new(element: node.node_name, index: elem_index, id: node['id'])
+                ]
                 @stepping_over_length = @stepping_over_offset = @stepping_over_index = nil
               end
 
