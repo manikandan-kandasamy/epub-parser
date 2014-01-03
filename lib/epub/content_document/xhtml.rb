@@ -72,16 +72,13 @@ module EPUB
             when Nokogiri::XML::Node::TEXT_NODE
               text_index = elem_index + 1
 
-              pos = 0
               content = node.content
-              while pos
-                pos = content.index(@query, pos)
-                if pos
-                  result_steps = [CFI::Step.new(element: element.node_name, index: element_index, id: element['id']), CFI::Step.new(index: text_index, character_offset: pos)]
-                  results << result_steps
-                  pos += 1
-                end
-              end
+              results.concat find_from_content(content).map {|pos|
+                [
+                  CFI::Step.new(element: element.node_name, index: element_index, id: element['id']),
+                  CFI::Step.new(index: text_index, character_offset: pos)
+                ]
+              }
 
               if @stepping_over_length && node_index == 0 && STEPPING_OVER_ELEMENTS.include?(element.node_name) or
                   @stepping_over_length && STEPPING_OVER_ELEMENTS.include?(@stepping_over_end_tag)
@@ -132,6 +129,19 @@ module EPUB
         end
 
         private
+
+        def find_from_content(content)
+          results = []
+          pos = 0
+          while pos
+            pos = content.index(@query, pos)
+            if pos
+              results << pos
+              pos += 1
+            end
+          end
+          results
+        end
 
         def detect_stepping_over(content)
           return unless @query.length > 1
