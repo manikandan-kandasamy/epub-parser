@@ -96,7 +96,7 @@
           href="containing%20space.xhtml"
           media-type="application/xhtml+xml"/>
     <item id="japanese-filename"
-          href="日本語.xhtml"
+          href="にほんご.xhtml"
           media-type="application/xhtml+xml"/>
     <item id="encoded-japanese-filename"
           href="%E6%97%A5%E6%9C%AC%E8%AA%9E.xhtml"

@@ -41,8 +41,8 @@ class TestContentDocument < Test::Unit::TestCase
 
   def test_title_returns_value_of_title_element
     content_doc = XHTML.new
-    stub(content_doc).read {File.read(File.join(File.dirname(__FILE__), 'fixtures', 'book', 'OPS', '日本語.xhtml'))}
-    assert_equal '日本語', content_doc.title
+    stub(content_doc).read {File.read(File.join(File.dirname(__FILE__), 'fixtures', 'book', 'OPS', 'にほんご.xhtml'))}
+    assert_equal 'にほんご', content_doc.title
   end
 
   def test_title_returns_empty_string_when_title_element_not_exist
