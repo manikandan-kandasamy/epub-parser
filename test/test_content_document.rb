@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 require_relative 'helper'
-require 'epub/cfi'
+require 'epub/searcher'
 
 class TestContentDocument < Test::Unit::TestCase
   include EPUB::ContentDocument
@@ -50,88 +50,5 @@ class TestContentDocument < Test::Unit::TestCase
     content_doc = XHTML.new
     stub(content_doc).read {'content'}
     assert_equal '', content_doc.title
-  end
-
-  class TestSearch < self
-    def setup
-      super
-      item = EPUB::Publication::Package::Manifest::Item.new
-      stub(item).read {File.read(File.join(File.dirname(__FILE__), 'fixtures', 'book', 'OPS', 'search.xhtml'))}
-      @content_doc = XHTML.new
-      @content_doc.item = item
-    end
-
-    def test_search_simple
-      expected = [
-        [
-          EPUB::CFI::Step.new(element: 'head', index: 2, id: nil),
-          EPUB::CFI::Step.new(element: 'title', index: 2, id: nil),
-          EPUB::CFI::Step.new(character_offset: 20, index: 1)
-        ],
-        [
-          EPUB::CFI::Step.new(element: 'body', index: 4, id: nil),
-          EPUB::CFI::Step.new(element: 'h1', index: 2, id: nil),
-          EPUB::CFI::Step.new(element: 'em', index: 2, id: nil),
-          EPUB::CFI::Step.new(character_offset: 0, index: 1)
-        ]
-      ]
-
-      assert_equal expected, @content_doc.search('search')
-    end
-
-    def test_text_after_child_element
-      expected = [
-        EPUB::CFI::Step.new(element: 'body', index: 4),
-        EPUB::CFI::Step.new(element: 'p', index: 4),
-        EPUB::CFI::Step.new(character_offset: 6, index: 3),
-      ]
-
-      assert_equal expected, @content_doc.search('paragraph').first
-    end
-
-    def test_stepping_over_start_tag
-      expected = [
-        EPUB::CFI::Step.new(element: 'body', index: 4),
-        EPUB::CFI::Step.new(element: 'p', index: 4),
-        EPUB::CFI::Step.new(character_offset: 8, index: 1)
-      ]
-
-      assert_equal expected, @content_doc.search('an em').first
-    end
-
-    def test_stepping_over_end_tag
-      expected = [
-        EPUB::CFI::Step.new(element: 'body', index: 4),
-        EPUB::CFI::Step.new(element: 'p', index: 4),
-        EPUB::CFI::Step.new(element: 'em', index: 2),
-        EPUB::CFI::Step.new(character_offset: 1, index: 1)
-      ]
-
-      assert_equal expected, @content_doc.search('m in').first
-    end
-
-    def test_stepping_over_start_and_end_tag
-      expected = [
-        EPUB::CFI::Step.new(element: 'body', index: 4),
-        EPUB::CFI::Step.new(element: 'p', index: 4),
-        EPUB::CFI::Step.new(character_offset: 8, index: 1)
-      ]
-
-      assert_equal expected, @content_doc.search('an em in').first
-    end
-
-    def test_not_stepping_over_tag
-      assert_empty @content_doc.search("仮名がな")
-    end
-
-    def test_img
-      expected = [
-        EPUB::CFI::Step.new(element: 'body', index: 4),
-        EPUB::CFI::Step.new(element: 'p', index: 6),
-        EPUB::CFI::Step.new(element: 'img', index: 2)
-      ]
-
-      assert_equal expected, @content_doc.search('image').first
-    end
   end
 end
