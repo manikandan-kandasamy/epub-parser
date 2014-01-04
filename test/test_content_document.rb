@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 require_relative 'helper'
-require 'epub/searcher'
 
 class TestContentDocument < Test::Unit::TestCase
   include EPUB::ContentDocument
