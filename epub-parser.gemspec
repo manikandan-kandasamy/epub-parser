@@ -16,10 +16,10 @@ Gem::Specification.new do |s|
 
   s.files         = `git ls-files`.split("\n")
                     .push('test/fixtures/book/OPS/ルートファイル.opf')
-                    .push('test/fixtures/book/OPS/日本語.xhtml')
+                    .push('test/fixtures/book/OPS/にほんご.xhtml')
                     .push(Dir['docs/*.md'])
   s.files.reject! do |fn|
-    ['"test/fixtures/book/OPS/\343\203\253\343\203\274\343\203\210\343\203\225\343\202\241\343\202\244\343\203\253.opf"', '"test/fixtures/book/OPS/\346\227\245\346\234\254\350\252\236.xhtml"'].include? fn
+    ['"test/fixtures/book/OPS/\343\203\253\343\203\274\343\203\210\343\203\225\343\202\241\343\202\244\343\203\253.opf"', '"test/fixtures/book/OPS/\343\201\253\343\201\273\343\202\223\343\201\224.xhtml"'].include? fn
   end
   s.test_files    = s.files & Dir['{test,spec,features}/**/*.{rb,feature}']
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
