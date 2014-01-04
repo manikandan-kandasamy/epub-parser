@@ -156,6 +156,7 @@ TODOS
 * Extracting and organizing common behavior from some classes to modules
 * Abstraction of XML parser(making it possible to use REXML, standard bundled XML library of Ruby)
 * Handle with encodings other than UTF-8
+* WAI-ARIA
 
 DONE
 ----
