@@ -27,11 +27,11 @@ See {file:docs/EpubOpen}.
 
 ### As a library
 
-Use `EPUB::Parser.parse` at first:
+Use `EPUB3::Parser.parse` at first:
 
-    require 'epub/parser'
+    require 'epub3/parser'
     
-    book = EPUB::Parser.parse('/path/to/book.epub')
+    book = EPUB3::Parser.parse('/path/to/book.epub')
 
 This book object can yield page by spine's order(spine defines the order to read that the author determines):
 
@@ -39,7 +39,7 @@ This book object can yield page by spine's order(spine defines the order to read
       # do something...
     end
 
-`page` above is an {EPUB::Publication::Package::Manifest::Item} object and you can call {EPUB::Publication::Package::Manifest::Item#href #href} to see where is the page file:
+`page` above is an {EPUB3::Publication::Package::Manifest::Item} object and you can call {EPUB3::Publication::Package::Manifest::Item#href #href} to see where is the page file:
 
     book.each_page_on_spine do |page|
       file = page.href # => path/to/page/in/zip/archive
@@ -48,7 +48,7 @@ This book object can yield page by spine's order(spine defines the order to read
       }
     end
 
-And {EPUB::Publication::Package::Manifest::Item Item} provides syntax suger {EPUB::Publication::Package::Manifest::Item#read #read} for above:
+And {EPUB3::Publication::Package::Manifest::Item Item} provides syntax suger {EPUB3::Publication::Package::Manifest::Item#read #read} for above:
 
     html = page.read
     doc = Nokogiri.HTML(html)
@@ -56,15 +56,15 @@ And {EPUB::Publication::Package::Manifest::Item Item} provides syntax suger {EPU
 
 For several utilities of Item, see {file:docs/Item.markdown} page.
 
-By the way, although `book` above is a {EPUB::Book} object, all features are provided by {EPUB} module. Therefore YourBook class can include the features of {EPUB}:
+By the way, although `book` above is a {EPUB3::Book} object, all features are provided by {EPUB} module. Therefore YourBook class can include the features of {EPUB}:
 
-    require 'epub'
+    require 'epub3'
     
     class YourBook < ActiveRecord::Base
-        include EPUB::Book::Features
+        include EPUB3::Book::Features
     end
     
-    book = EPUB::Parser.parse(
+    book = EPUB3::Parser.parse(
       'uploaded-book.epub',
       :class => YourBook # *************** pass YourBook class
     )
@@ -83,7 +83,7 @@ By the way, although `book` above is a {EPUB::Book} object, all features are pro
 You are also able to find YourBook object for the first:
 
     book = YourBook.find params[:id]
-    ret = EPUB::Parser.parse(
+    ret = EPUB3::Parser.parse(
       'uploaded-book.epub',
       :book => book # ******************* pass your book instance
     ) # => book

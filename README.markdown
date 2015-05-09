@@ -13,10 +13,10 @@ USAGE
 
 ### As a library
 
-    require 'epub/parser'
+    require 'epub3/parser'
     
-    book = EPUB::Parser.parse('book.epub')
-    book.metadata.titles # => Array of EPUB::Publication::Package::Metadata::Title. Main title, subtitle, etc...
+    book = EPUB3::Parser.parse('book.epub')
+    book.metadata.titles # => Array of EPUB3::Publication::Package::Metadata::Title. Main title, subtitle, etc...
     book.metadata.title # => Title string including all titles
     book.metadata.creators # => Creators(authors)
     book.each_page_on_spine do |page|
@@ -129,8 +129,8 @@ RECENT CHANGES
 
 ### 0.1.7
 
-* [Experimental]Add `EPUB::Searcher` module. See {file:Searcher.markdown} for details
-* Detect and set character encoding in `EPUB::Publication::Package::Item#read`
+* [Experimental]Add `EPUB3::Searcher` module. See {file:Searcher.markdown} for details
+* Detect and set character encoding in `EPUB3::Publication::Package::Item#read`
 
 See {file:CHANGELOG.markdown} for older changelogs and details.
 

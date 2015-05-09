@@ -1,10 +1,10 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "epub/parser/version"
+require "epub3/parser/version"
 
 Gem::Specification.new do |s|
   s.name        = "epub-parser"
-  s.version     = EPUB::Parser::VERSION
+  s.version     = EPUB3::Parser::VERSION
   s.authors     = ["KITAITI Makoto"]
   s.email       = ["KitaitiMakoto@gmail.com"]
   s.homepage    = "https://github.com/KitaitiMakoto/epub-parser"

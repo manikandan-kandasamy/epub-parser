@@ -1,9 +1,9 @@
 require_relative 'helper'
-require 'epub'
+require 'epub3'
 
 class TestInspect < Test::Unit::TestCase
   class TestPackage < TestInspect
-    include EPUB::Publication
+    include EPUB3::Publication
 
     def setup
       @package = Package.new
@@ -24,7 +24,7 @@ class TestInspect < Test::Unit::TestCase
     def test_package_inspects_content_models
       @package.metadata = Package::Metadata.new
 
-      assert_match '@metadata=#<EPUB::Publication::Package::Metadata:', @package.inspect
+      assert_match '@metadata=#<EPUB3::Publication::Package::Metadata:', @package.inspect
     end
 
     class TestMetadata < TestPackage
@@ -37,7 +37,7 @@ class TestInspect < Test::Unit::TestCase
       end
 
       def test_inspects_package_simply
-        assert_match /@package=\#<EPUB::Publication::Package:[^ ]+>/, @metadata.inspect
+        assert_match /@package=\#<EPUB3::Publication::Package:[^ ]+>/, @metadata.inspect
       end
 
       def test_inspects_attributes
@@ -45,7 +45,7 @@ class TestInspect < Test::Unit::TestCase
         title.content = 'Book Title'
         @metadata.titles << title
 
-        title_pattern = RUBY_VERSION >= '2.0' ? '@dc_titles=[#<EPUB::Publication::Package::Metadata::Title' : 'Book Title'
+        title_pattern = RUBY_VERSION >= '2.0' ? '@dc_titles=[#<EPUB3::Publication::Package::Metadata::Title' : 'Book Title'
 
         assert_match title_pattern, @metadata.inspect
       end
@@ -54,7 +54,7 @@ class TestInspect < Test::Unit::TestCase
         meta = Package::Metadata::Title.new
         meta.content = 'Book Title'
 
-        title_pattern = RUBY_VERSION >= '2.0' ? '#<EPUB::Publication::Package::Metadata::Title' : 'Book Title'
+        title_pattern = RUBY_VERSION >= '2.0' ? '#<EPUB3::Publication::Package::Metadata::Title' : 'Book Title'
 
         assert_match title_pattern, meta.inspect
       end
@@ -102,7 +102,7 @@ class TestInspect < Test::Unit::TestCase
       end
 
       def test_inspects_package_simply
-        assert_match /@package=\#<EPUB::Publication::Package:[^ ]+>/, @manifest.inspect
+        assert_match /@package=\#<EPUB3::Publication::Package:[^ ]+>/, @manifest.inspect
       end
 
       class TestItem < TestManifest
@@ -113,7 +113,7 @@ class TestInspect < Test::Unit::TestCase
         end
 
         def test_inspects_manifest_simply
-          assert_match /\#<EPUB::Publication::Package::Manifest:[^ ]+>/, @item.inspect
+          assert_match /\#<EPUB3::Publication::Package::Manifest:[^ ]+>/, @item.inspect
         end
       end
     end

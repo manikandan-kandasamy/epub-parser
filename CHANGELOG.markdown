@@ -24,24 +24,24 @@ CHANGELOG
 0.1.7
 -----
 
-* [Experimental]Add `EPUB::Searcher` module. See {file:Searcher.markdown} for details
-* Detect and set character encoding in `EPUB::Publication::Package::Item#read`
+* [Experimental]Add `EPUB3::Searcher` module. See {file:Searcher.markdown} for details
+* Detect and set character encoding in `EPUB3::Publication::Package::Item#read`
 
 0.1.6
 -----
 * Remove `EPUB.parse` method
-* Remove `EPUB::Publication::Package::Metadata#to_hash`
-* Add `EPUB::Publication::Package::Metadata::Identifier` for ad-hoc `scheme` attribute and `#isbn?` method
+* Remove `EPUB3::Publication::Package::Metadata#to_hash`
+* Add `EPUB3::Publication::Package::Metadata::Identifier` for ad-hoc `scheme` attribute and `#isbn?` method
 * Remove `MethodDecorators::Deprecated`
-* Make `EPUB::Parser::OCF::CONTAINER_FILE` and other constants deprecated
-* Make `EPUB::Publication::Package::Metadata::Link#rel` a `Set`
-* Add exception class `EPUB::Constants::MediaType::UnsupportedMediaType`
-* Make `EPUB::Constants::MediaType::UnsupportedError` deprecated. Use `UnsupportedMediatType` instead
-* Add `EPUB::Publication::Package::Item#cover_image?`
-* Add `EPUB::Book::Features` module and move methods of `EPUB` module to it(Thanks, [takahashim][]!)
+* Make `EPUB3::Parser::OCF::CONTAINER_FILE` and other constants deprecated
+* Make `EPUB3::Publication::Package::Metadata::Link#rel` a `Set`
+* Add exception class `EPUB3::Constants::MediaType::UnsupportedMediaType`
+* Make `EPUB3::Constants::MediaType::UnsupportedError` deprecated. Use `UnsupportedMediatType` instead
+* Add `EPUB3::Publication::Package::Item#cover_image?`
+* Add `EPUB3::Book::Features` module and move methods of `EPUB` module to it(Thanks, [takahashim][]!)
 * Make including `EPUB` deprecated
 * Parse `hidden` attribute of `nav` elements
-* [Experimental]Add `EPUB::ContentDocument::Navigation::Item#traverse`
+* [Experimental]Add `EPUB3::ContentDocument::Navigation::Item#traverse`
 
 [takahashim]: https://github.com/takahashim
 
@@ -68,10 +68,10 @@ CHANGELOG
 
 0.1.3
 -----
-* Add `EPUB::Parser::Utils` module
+* Add `EPUB3::Parser::Utils` module
 * Add a command-line tool `epub-open`
 * Add support for XHTML Navigation Document
-* Make `EPUB::Publication::Package::Metadata#to_hash` obsolete. Use `#to_h` instead
+* Make `EPUB3::Publication::Package::Metadata#to_hash` obsolete. Use `#to_h` instead
 * Add utility methods `EPUB#description`, `EPUB#date` and `EPUB#unique_identifier`
 
 0.1.2

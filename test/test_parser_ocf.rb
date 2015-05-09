@@ -5,7 +5,7 @@ class TestParserOCF < Test::Unit::TestCase
   def setup
     file = 'test/fixtures/book.epub'
     @zip = Zip::Archive.open(file)
-    @parser = EPUB::Parser::OCF.new(@zip)
+    @parser = EPUB3::Parser::OCF.new(@zip)
     @container_xml = @zip.fopen('META-INF/container.xml').read
   end
 

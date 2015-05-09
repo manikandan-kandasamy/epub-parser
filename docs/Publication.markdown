@@ -5,30 +5,30 @@ Publication(Information about EPUB book)
 
 EPUB Publications is information about EPUB books.
 
-EPUB Parser represents it as {EPUB::Publication} module and classes under the namespace and you can access them such like `EPUB::Parser.parse("path/to/book.epub").package`
+EPUB Parser represents it as {EPUB3::Publication} module and classes under the namespace and you can access them such like `EPUB3::Parser.parse("path/to/book.epub").package`
 
 Let
 
-    book = EPUB::Parser.parse("path/to/book.epub")
+    book = EPUB3::Parser.parse("path/to/book.epub")
 
 for continuing.
 
 Five Models
 -----------
 
-`book.package` is a package document, a root of information tree about the book, and it has attributes to access five major models of the publication; {EPUB::Publication::Package::Metadata Metadata}, {EPUB::Publication::Package::Manifest Manifest}, {EPUB::Publication::Package::Spine Spine}, {EPUB::Publication::Package::Guide Guide} and {EPUB::Publication::Package::Bindings Bindings}.
+`book.package` is a package document, a root of information tree about the book, and it has attributes to access five major models of the publication; {EPUB3::Publication::Package::Metadata Metadata}, {EPUB3::Publication::Package::Manifest Manifest}, {EPUB3::Publication::Package::Spine Spine}, {EPUB3::Publication::Package::Guide Guide} and {EPUB3::Publication::Package::Bindings Bindings}.
 
 Each of them has information the book in the way its own.
 
 Metadata
 --------
 
-{EPUB::Publication::Package::Metadata Metadata} is literally metadata of the book, including identifiers, titles, languages, links and so on.
+{EPUB3::Publication::Package::Metadata Metadata} is literally metadata of the book, including identifiers, titles, languages, links and so on.
 
 You can access them by:
 
-    md = book.package.metadata # => EPUB::Publication::Package::Metadata
-    md.titles # => [#<EPUB::Publication::Package::Metadata::Title...>, #<EPUB::Publication::Package::Metadata::Title...>, ...]
+    md = book.package.metadata # => EPUB3::Publication::Package::Metadata
+    md.titles # => [#<EPUB3::Publication::Package::Metadata::Title...>, #<EPUB3::Publication::Package::Metadata::Title...>, ...]
     # ...
 
 Manifest

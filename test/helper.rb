@@ -6,4 +6,4 @@ end
 require 'test/unit'
 require 'test/unit/rr'
 require 'test/unit/notify'
-require 'epub/parser'
+require 'epub3/parser'

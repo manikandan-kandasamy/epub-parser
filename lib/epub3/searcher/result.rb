@@ -1,0 +1,73 @@
+module EPUB3
+  module Searcher
+    class Result
+      attr_reader :parent_steps, :start_steps, :end_steps
+
+      # @param parent_steps [Array<Step>] common steps between start and end
+      # @param start_steps [Array<Step>] steps to start from +parent_steps+
+      # @param end_steps [Array<Step>] steps to end from +parent_steps+
+      def initialize(parent_steps, start_steps, end_steps)
+        @parent_steps, @start_steps, @end_steps = parent_steps, start_steps, end_steps
+      end
+
+      def to_xpath_and_offset(with_xmlns=false)
+        xpath = (@parent_steps + @start_steps).reduce('.') {|path, step|
+          case step.type
+          when :element
+            path + '/%s*[%d]' % [with_xmlns ? 'xhtml:' : nil, step.index + 1]
+          when :text
+            path + '/text()[%s]' % [step.index + 1]
+          else
+            path
+          end
+        }
+
+        [xpath, @start_steps.last.index]
+      end
+
+      def to_cfi_s
+        [@parent_steps, @start_steps, @end_steps].collect {|steps|
+          steps ? steps.collect(&:to_cfi_s).join : nil
+        }.compact.join(',')
+      end
+
+      def ==(other)
+        [@parent_steps + @start_steps.to_a] == [other.parent_steps + other.start_steps.to_a] and
+          [@parent_steps + @end_steps.to_a] == [other.parent_steps + other.end_steps.to_a]
+      end
+
+      class Step
+        attr_reader :type, :index, :info
+
+        def initialize(type, index, info={})
+          @type, @index, @info = type, index, info
+        end
+
+        def ==(other)
+          self.type == other.type and
+            self.index == other.index and
+            self.info == other.info
+        end
+
+        def to_cfi_s
+          case type
+          when :element
+            '/%d%s' % [(index + 1) * 2, id_assertion]
+          when :text
+            '/%d' % [(index + 1)]
+          when :character
+            ':%d' % [index]
+          when :itemref
+            '/%d%s!' % [(index + 1) * 2, id_assertion]
+          end
+        end
+
+        private
+
+        def id_assertion
+          info[:id] ? "[#{info[:id]}]" : nil
+        end
+      end
+    end
+  end
+end

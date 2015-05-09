@@ -1,5 +1,5 @@
 require 'optparse'
-require 'epub/parser'
+require 'epub3/parser'
 
 options = {:format => :line}
 opt = OptionParser.new do |opt|
@@ -9,7 +9,7 @@ Show metadata of an EPUB file
 Usage: epubinfo [options] EPUBFILE
 
 EOB
-  opt.version = EPUB::Parser::VERSION
+  opt.version = EPUB3::Parser::VERSION
   formats = [:line, :json, :yaml]
   opt.on '-f', '--format=FORMAT', formats, "format of output(#{formats[0..-2].join(', ')} or #{formats.last}), defaults to line(for console)" do |format|
     options[:format] = format
@@ -30,7 +30,7 @@ unless file
   abort
 end
 
-book = EPUB::Parser.parse(file)
+book = EPUB3::Parser.parse(file)
 data = {'Title' => [book.title]}
 data.merge!(book.metadata.to_h)
 data['Unique identifier'] = [book.metadata.unique_identifier]

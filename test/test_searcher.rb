@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 require_relative 'helper'
-require 'epub/searcher'
+require 'epub3/searcher'
 
 class TestSearcher < Test::Unit::TestCase
   class TestPublication < self
@@ -8,7 +8,7 @@ class TestSearcher < Test::Unit::TestCase
       super
       opf_path = File.expand_path('../fixtures/book/OPS/ルートファイル.opf', __FILE__)
       nav_path = File.expand_path('../fixtures/book/OPS/nav.xhtml', __FILE__)
-      @package = EPUB::Parser::Publication.new(open(opf_path), 'OPS/ルートファイル.opf').parse
+      @package = EPUB3::Parser::Publication.new(open(opf_path), 'OPS/ルートファイル.opf').parse
       @package.spine.each_itemref do |itemref|
         stub(itemref.item).read {
           itemref.idref == 'nav' ? File.read(nav_path) : '<html></html>'
@@ -17,7 +17,7 @@ class TestSearcher < Test::Unit::TestCase
     end
 
     def test_no_result
-      assert_empty EPUB::Searcher::Publication.search(@package, 'no result')
+      assert_empty EPUB3::Searcher::Publication.search(@package, 'no result')
     end
 
     def test_simple
@@ -26,13 +26,13 @@ class TestSearcher < Test::Unit::TestCase
           [[[:element, 2, {:name => 'spine', :id => nil}], [:itemref, 0, {:id => nil}], [:element, 0, {:name => 'head', :id => nil}], [:element, 0, {:name => 'title', :id => nil}], [:text, 0]], [[:character, 9]], [[:character, 16]]],
           [[[:element, 2, {:name => 'spine', :id => nil}], [:itemref, 0, {:id => nil}], [:element, 1, {:name => 'body', :id => nil}], [:element, 0, {:name => 'div', :id => nil}], [:element, 0, {:name => 'nav', :id => 'idid'}], [:element, 0, {:name => 'hgroup', :id => nil}], [:element, 1, {:name => 'h1', :id => nil}], [:text, 0]], [[:character, 9]], [[:character, 16]]]
         ]),
-        EPUB::Searcher::Publication.search(@package, 'Content')
+        EPUB3::Searcher::Publication.search(@package, 'Content')
       )
     end
 
     class TesetResult < self
       def test_to_cfi_s
-        assert_equal '/6/2!/4/2/2[idid]/2/4/1,:9,:16', EPUB::Searcher::Publication.search(@package, 'Content').last.to_cfi_s
+        assert_equal '/6/2!/4/2/2[idid]/2/4/1,:9,:16', EPUB3::Searcher::Publication.search(@package, 'Content').last.to_cfi_s
       end
     end
   end
@@ -47,41 +47,41 @@ class TestSearcher < Test::Unit::TestCase
     end
 
     def test_no_result
-      assert_empty EPUB::Searcher::XHTML::Restricted.search(@h1, 'no result')
+      assert_empty EPUB3::Searcher::XHTML::Restricted.search(@h1, 'no result')
     end
 
     def test_simple
-      assert_equal results([[[[:text, 0]], [[:character, 9]], [[:character, 16]]]]), EPUB::Searcher::XHTML::Restricted.search(@h1, 'Content')
+      assert_equal results([[[[:text, 0]], [[:character, 9]], [[:character, 16]]]]), EPUB3::Searcher::XHTML::Restricted.search(@h1, 'Content')
     end
 
     def test_multiple_text_result
-      assert_equal results([[[[:text, 0]], [[:character, 6]], [[:character, 7]]], [[[:text, 0]], [[:character, 10]], [[:character, 11]]]]), EPUB::Searcher::XHTML::Restricted.search(@h1, 'o')
+      assert_equal results([[[[:text, 0]], [[:character, 6]], [[:character, 7]]], [[[:text, 0]], [[:character, 10]], [[:character, 11]]]]), EPUB3::Searcher::XHTML::Restricted.search(@h1, 'o')
     end
 
     def test_text_after_element
       elem = Nokogiri.XML('<root><elem>inner</elem>after</root>')
 
-      assert_equal results([[[[:text, 1]], [[:character, 0]], [[:character, 5]]]]), EPUB::Searcher::XHTML::Restricted.search(elem, 'after')
+      assert_equal results([[[[:text, 1]], [[:character, 0]], [[:character, 5]]]]), EPUB3::Searcher::XHTML::Restricted.search(elem, 'after')
     end
 
     def test_entity_reference
       elem = Nokogiri.XML('<root>before&lt;after</root>')
 
-      assert_equal results([[[[:text, 0]], [[:character, 6]], [[:character, 7]]]]), EPUB::Searcher::XHTML::Restricted.search(elem, '<')
+      assert_equal results([[[[:text, 0]], [[:character, 6]], [[:character, 7]]]]), EPUB3::Searcher::XHTML::Restricted.search(elem, '<')
     end
 
     def test_nested_result
-      assert_equal results([[[[:element, 1, {:name => 'ol', :id => nil}], [:element, 1, {:name => 'li', :id => nil}], [:element, 1, {:name => 'ol', :id => nil}], [:element, 1, {:name => 'li', :id => nil}], [:element, 0, {:name => 'a', :id => nil}], [:text, 0]], [[:character, 0]], [[:character, 3]]]]), EPUB::Searcher::XHTML::Restricted.search(@nav, '第二節')
+      assert_equal results([[[[:element, 1, {:name => 'ol', :id => nil}], [:element, 1, {:name => 'li', :id => nil}], [:element, 1, {:name => 'ol', :id => nil}], [:element, 1, {:name => 'li', :id => nil}], [:element, 0, {:name => 'a', :id => nil}], [:text, 0]], [[:character, 0]], [[:character, 3]]]]), EPUB3::Searcher::XHTML::Restricted.search(@nav, '第二節')
     end
 
     def test_img
-      assert_equal [result([[[:element, 1, {:name => 'ol', :id => nil}], [:element, 1, {:name => 'li', :id => nil}], [:element, 1, {:name => 'ol', :id => nil}], [:element, 2, {:name => 'li', :id => nil}], [:element, 0, {:name => 'a', :id => nil}], [:element, 0, {:name => 'img', :id => nil}]], nil, nil])], EPUB::Searcher::XHTML::Restricted.search(@nav, '第三節')
+      assert_equal [result([[[:element, 1, {:name => 'ol', :id => nil}], [:element, 1, {:name => 'li', :id => nil}], [:element, 1, {:name => 'ol', :id => nil}], [:element, 2, {:name => 'li', :id => nil}], [:element, 0, {:name => 'a', :id => nil}], [:element, 0, {:name => 'img', :id => nil}]], nil, nil])], EPUB3::Searcher::XHTML::Restricted.search(@nav, '第三節')
     end
 
     class TestResult < self
       def setup
         super
-        @result = EPUB::Searcher::XHTML::Restricted.search(@doc, '第二節').first
+        @result = EPUB3::Searcher::XHTML::Restricted.search(@doc, '第二節').first
       end
 
       def test_to_xpath_and_offset
@@ -94,7 +94,7 @@ class TestSearcher < Test::Unit::TestCase
       end
 
       def test_to_cfi_s_img
-        assert_equal '/4/2/2[idid]/4/4/4/6/2/2', EPUB::Searcher::XHTML::Restricted.search(@doc, '第三節').first.to_cfi_s
+        assert_equal '/4/2/2[idid]/4/4/4/6/2/2', EPUB3::Searcher::XHTML::Restricted.search(@doc, '第三節').first.to_cfi_s
       end
     end
   end
@@ -106,12 +106,12 @@ class TestSearcher < Test::Unit::TestCase
   end
 
   def result(steps_triple)
-    EPUB::Searcher::Result.new(*steps_triple.collect {|steps|
+    EPUB3::Searcher::Result.new(*steps_triple.collect {|steps|
       steps ? steps.collect {|s| step(s)} : steps
     })
   end
 
   def step(step)
-    EPUB::Searcher::Result::Step.new(*step)
+    EPUB3::Searcher::Result::Step.new(*step)
   end
 end

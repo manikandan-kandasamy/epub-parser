@@ -1,13 +1,13 @@
 require_relative 'helper'
-require 'epub/book'
-require 'epub/publication'
+require 'epub3/book'
+require 'epub3/publication'
 
-class EPUB::Publication::Package
-  include EPUB::Publication::FixedLayout
+class EPUB3::Publication::Package
+  include EPUB3::Publication::FixedLayout
 end
 
 class TestFixedLayout < Test::Unit::TestCase
-  include EPUB::Publication
+  include EPUB3::Publication
 
   class TestPackage < TestFixedLayout
     def test_package_dont_use_fixed_layout_by_default
@@ -242,7 +242,7 @@ class TestFixedLayout < Test::Unit::TestCase
       @itemref = Package::Spine::Itemref.new
       @itemref.idref = 'item'
       package.spine << @itemref
-      @doc = EPUB::ContentDocument::XHTML.new
+      @doc = EPUB3::ContentDocument::XHTML.new
       @doc.item = item
     end
 

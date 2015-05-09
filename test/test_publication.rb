@@ -1,15 +1,15 @@
 require_relative 'helper'
-require 'epub/publication'
+require 'epub3/publication'
 
 class TestPublication < Test::Unit::TestCase
-  include EPUB::Publication
+  include EPUB3::Publication
   def setup
-    @package = EPUB::Publication::Package.new
+    @package = EPUB3::Publication::Package.new
   end
 
   def test_package_clear_package_attribute_of_submodules_when_attribute_writer_called
-    metadata = EPUB::Publication::Package::Metadata.new
-    another_metadata = EPUB::Publication::Package::Metadata.new
+    metadata = EPUB3::Publication::Package::Metadata.new
+    another_metadata = EPUB3::Publication::Package::Metadata.new
 
     @package.metadata = metadata
     assert_equal metadata.package, @package
@@ -182,23 +182,23 @@ class TestPublication < Test::Unit::TestCase
   end
 
   class TestManifest < TestPublication
-    include EPUB::Publication
+    include EPUB3::Publication
 
     class TestItem < TestManifest
       def test_content_document_returns_nil_when_not_xhtml_nor_svg
-        item = EPUB::Publication::Package::Manifest::Item.new
+        item = EPUB3::Publication::Package::Manifest::Item.new
         item.media_type = 'some/media'
         assert_nil item.content_document
       end
 
       def test_content_document_returns_navigation_document_when_nav
-        item = EPUB::Publication::Package::Manifest::Item.new
+        item = EPUB3::Publication::Package::Manifest::Item.new
         item.media_type = 'application/xhtml+xml'
         item.properties = %w[nav]
         stub(item).read {File.read(File.expand_path('../fixtures/book/OPS/nav.xhtml', __FILE__))}
         stub(item).manifest.stub!.items {[]}
 
-        assert_instance_of EPUB::ContentDocument::Navigation, item.content_document
+        assert_instance_of EPUB3::ContentDocument::Navigation, item.content_document
       end
 
       def test_can_refer_itemref_which_refers_self
@@ -245,7 +245,7 @@ class TestPublication < Test::Unit::TestCase
            'Shift-JIS' => [Encoding::Shift_JIS, 'shift_jis-encoded'])
       def test_read_detects_encoding_automatically(data)
         encoding, id = data
-        epub = EPUB::Parser.parse('test/fixtures/book.epub')
+        epub = EPUB3::Parser.parse('test/fixtures/book.epub')
         item = epub.package.manifest[id]
         assert_equal encoding, item.read.encoding
       end

@@ -1,7 +1,7 @@
 require 'English'
 require 'optparse'
 require 'irb'
-require 'epub/parser'
+require 'epub3/parser'
 
 shell = IRB
 
@@ -19,7 +19,7 @@ EOB
 }.parse!
 
 $0 = File.basename($PROGRAM_NAME)
-include EPUB::Book::Features
-EPUB::Parser.parse(ARGV.shift, :book => self)
+include EPUB3::Book::Features
+EPUB3::Parser.parse(ARGV.shift, :book => self)
 $stderr.puts "Enter \"exit\" to exit #{shell}"
 shell.start

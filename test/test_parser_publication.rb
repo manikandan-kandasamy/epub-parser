@@ -7,7 +7,7 @@ class TestParserPublication < Test::Unit::TestCase
     rootfile = 'OPS/ルートファイル.opf'
     @zip = Zip::Archive.open(file)
     opf = @zip.fopen(rootfile).read
-    @parser = EPUB::Parser::Publication.new(opf, rootfile)
+    @parser = EPUB3::Parser::Publication.new(opf, rootfile)
     @package = @parser.parse_package
   end
 
@@ -32,7 +32,7 @@ class TestParserPublication < Test::Unit::TestCase
   end
 
   def test_has_empty_hash_as_prefix_when_no_prefix_attribute
-    parser = EPUB::Parser::Publication.new('<package></package>', '')
+    parser = EPUB3::Parser::Publication.new('<package></package>', '')
     package = parser.parse_package
     assert_empty package.prefix
   end
@@ -92,25 +92,25 @@ class TestParserPublication < Test::Unit::TestCase
     def test_fallback_attribute_of_item_should_be_item_object
       fallback = @manifest['manifest-item-2'].fallback
 
-      assert_instance_of EPUB::Publication::Package::Manifest::Item, fallback
+      assert_instance_of EPUB3::Publication::Package::Manifest::Item, fallback
       assert_equal 'manifest-item-fallback', fallback.id
     end
 
     def test_item_is_readable
-      item = EPUB::Parser.parse('test/fixtures/book.epub').package.manifest.items.first
+      item = EPUB3::Parser.parse('test/fixtures/book.epub').package.manifest.items.first
       doc = Nokogiri.XML item.read
 
       assert_equal 'html', doc.root.name
     end
 
     def test_item_unescape_href_when_reading_file
-      item = EPUB::Parser.parse('test/fixtures/book.epub').package.manifest['containing-encoded-space']
+      item = EPUB3::Parser.parse('test/fixtures/book.epub').package.manifest['containing-encoded-space']
       doc = Nokogiri.HTML(item.read)
       assert_equal 'Containing Space', (doc/'title').first.content
     end
 
     def test_iri_of_item_is_case_sensitive
-      manifest = EPUB::Parser.parse('test/fixtures/book.epub').package.manifest
+      manifest = EPUB3::Parser.parse('test/fixtures/book.epub').package.manifest
 
       assert_not_equal manifest['large-file-name'].read, manifest['small-file-name'].read
     end
@@ -169,7 +169,7 @@ class TestParserPublication < Test::Unit::TestCase
 
     def atest_each_itemref_yields_itemref_in_order_on_spine_element
       expected = %w[nav manifest-item-1 manifest-item-2 containing-space japanese-filename].map {|idref|
-        itemref = EPUB::Publication::Package::Spine::Itemref.new
+        itemref = EPUB3::Publication::Package::Spine::Itemref.new
         itemref.id = nil
         itemref.spine = @spine
         itemref.idref = idref
@@ -199,7 +199,7 @@ class TestParserPublication < Test::Unit::TestCase
     def test_reference_refers_item
       @parser.parse_manifest
 
-      assert_instance_of EPUB::Publication::Package::Manifest::Item, @guide.cover.item
+      assert_instance_of EPUB3::Publication::Package::Manifest::Item, @guide.cover.item
     end
   end
 
@@ -234,7 +234,7 @@ class TestParserPublication < Test::Unit::TestCase
     end
 
     def test_media_type_refers_item_as_handler
-      assert_kind_of EPUB::Publication::Package::Manifest::Item, @bindings.media_types.first.handler
+      assert_kind_of EPUB3::Publication::Package::Manifest::Item, @bindings.media_types.first.handler
     end
 
     def test_use_fallback_chain_use_bindings

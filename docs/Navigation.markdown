@@ -5,11 +5,11 @@ Traversing
 
 Example to show tree of Table of Contents:
 
-    nav = book.manifest.navs.first.content_document # => EPUB::ContentDocument::Navigation
-    toc = nav.toc # => EPUB::ContentDocument::Navigation::Navigation
+    nav = book.manifest.navs.first.content_document # => EPUB3::ContentDocument::Navigation
+    toc = nav.toc # => EPUB3::ContentDocument::Navigation::Navigation
     toc_tree = ''
     toc.traverse do |item, depth|
-      item # => EPUB::ContentDocument::Navigation::Item
+      item # => EPUB3::ContentDocument::Navigation::Item
       depth # => Integer
       toc_tree << "#{' ' * depth * 2}#{item.text}\n"
     end
