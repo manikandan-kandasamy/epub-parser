@@ -5,7 +5,7 @@ require 'yard'
 require 'rdoc/task'
 require 'cucumber'
 require 'cucumber/rake/task'
-require 'epub/parser/version'
+require 'epub3/parser/version'
 require 'zipruby'
 
 task :default => :test
@@ -51,17 +51,17 @@ namespace :doc do
 end
 
 namespace :gem do
-  desc "Build epub-parser-#{EPUB::Parser::VERSION}.gem into the pkg directory."
+  desc "Build epub-parser-#{EPUB3::Parser::VERSION}.gem into the pkg directory."
   task :build do
     Bundler::GemHelper.new.build_gem
   end
 
-  desc "Build and install epub-parser-#{EPUB::Parser::VERSION}.gem into system gems."
+  desc "Build and install epub-parser-#{EPUB3::Parser::VERSION}.gem into system gems."
   task :install do
     Bundler::GemHelper.new.install_gem
   end
 
-  desc "Create tag v#{EPUB::Parser::VERSION} and build and push epub-parser-#{EPUB::Parser::VERSION}.gem to Rubygems"
+  desc "Create tag v#{EPUB3::Parser::VERSION} and build and push epub-parser-#{EPUB3::Parser::VERSION}.gem to Rubygems"
   task :release => :test do
     Bundler::GemHelper.new.release_gem
   end
