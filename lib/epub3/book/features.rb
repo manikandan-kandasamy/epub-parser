@@ -71,27 +71,27 @@ module EPUB3
       end
 
       def images
-        resources.map(&:image?)
+        resources.select(&:image?)
       end
 
       def css
-        resources.map(&:css?)
+        resources.select(&:css?)
       end
 
       alias stylesheets css
 
       def js
-        resources.map(&:js?)
+        resources.select(&:js?)
       end
 
       alias javascripts js
 
       def text
-        resources.map(&:text?)
+        resources.select(&:text?)
       end
 
       def audios
-        resources.map(&:audio?)
+        resources.select(&:audio?)
       end
 
 
