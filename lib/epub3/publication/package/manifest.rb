@@ -131,10 +131,16 @@ module EPUB3
             EPUB3::MediaType::TEXT.include?(media_type)
           end
 
-          alias js? text?
-          alias css? text?
-          alias javascript? text?
-          alias stylesheet? text?
+          def js?
+            'text/javascript' == media_type
+          end
+
+          def css?
+            'text/css' == media_type
+          end
+
+          alias javascript? js?
+          alias stylesheet? css?
 
           def audio?
             EPUB3::MediaType::AUDIO.include?(media_type)
