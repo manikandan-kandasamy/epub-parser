@@ -70,6 +70,31 @@ module EPUB3
         manifest.items
       end
 
+      def images
+        resources.map(&:image?)
+      end
+
+      def css
+        resources.map(&:css?)
+      end
+
+      alias stylesheets css
+
+      def js
+        resources.map(&:js?)
+      end
+
+      alias javascripts js
+
+      def text
+        resources.map(&:text?)
+      end
+
+      def audios
+        resources.map(&:audio?)
+      end
+
+
       # Syntax sugar
       def rootfile_path
         ocf.container.rootfile.full_path.to_s

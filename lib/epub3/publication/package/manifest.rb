@@ -119,6 +119,27 @@ module EPUB3
             media_type == 'application/xhtml+xml'
           end
 
+          def image?
+            EPUB3::MediaType::IMAGE.include?(media_type)
+          end
+
+          def application?
+            EPUB3::MediaType::APPLICATION.include?(media_type)
+          end
+
+          def text?
+            EPUB3::MediaType::TEXT.include?(media_type)
+          end
+
+          alias js? text?
+          alias css? text?
+          alias javascript? text?
+          alias stylesheet? text?
+
+          def audio?
+            EPUB3::MediaType::AUDIO.include?(media_type)
+          end
+
           def nav?
             properties.include? 'nav'
           end
