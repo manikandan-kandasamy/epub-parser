@@ -1,5 +1,3 @@
-require 'enumerabler'
-
 module EPUB3
   module Publication
     class Package
@@ -23,15 +21,20 @@ module EPUB3
         class Reference
           TYPES = %w[cover title-page toc index glossary acknowledgements bibliography colophon copyright-page dedication epigraph foreword loi lot notes preface text]
           attr_accessor :guide,
-                        :type, :title, :href
+                        :type, :title
+          attr_reader :href
+
+          def href=(iri)
+            @href = iri.kind_of?(Addressable::URI) ? iri : Addressable::URI.parse(iri)
+          end
 
           def item
             return @item if @item
 
             request_uri = href.request_uri
-            @item = @guide.package.manifest.items.selector {|item|
+            @item = @guide.package.manifest.items.find {|item|
               item.href.request_uri == request_uri
-            }.first
+            }
           end
         end
 
@@ -41,7 +44,7 @@ module EPUB3
             var = instance_variable_get "@#{method_name}"
             return var if var
 
-            var = references.selector {|ref| ref.type == type}.first
+            var = references.find {|ref| ref.type == type}
             instance_variable_set "@#{method_name}", var
           end
         end

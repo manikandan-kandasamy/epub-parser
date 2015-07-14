@@ -1,11 +1,44 @@
 CHANGELOG
 =========
 
+0.2.3
+-----
+
+* Change the name of physical container adapter for file system: :File -> :UnpackedDirectory
+* Add `EPUB3::Publication::Package::Manifest::Item#full_path`
+* Make #href= acceptable String
+
+0.2.2
+-----
+
+* [BUGFIX]Item#entry_name returns normalized IRI
+
+0.2.1
+-----
+
+* Remove deprecated `EPUB3::Constants::MediaType::UnsupportedError`. Use `UnsupportedMediatType` instead.
+* Make it possible to use [archive-zip][] gem to extract contents from EPUB package via `EPUB3::OCF::PhysicalContainer::ArchiveZip`
+* Add warning about default physical container adapter change
+* Make it possible to extract contents from the web via `EPUB3::OCF::PhysicalContainer::UnpackedURI`. See {file:ExtractContentsFromWeb.markdown} for details.
+
+[archive-zip]: https://github.com/javanthropus/archive-zip
+
+0.2.0
+-----
+
+* Introduce abstraction layer for OCF physical container
+* Add `EPUB3::OCF::PhysicalContainer::File` and make it possible to parse file system directory as an EPUB file. See {file:docs/UnpackedArchive.markdown} for details.
+* Remove `EPUB3::Parser::OCF::CONTAINER_FILE` and other constants
+
 0.1.9
 -----
 
 * Introduce [Nokogumbo][] for XHTML Content Documents
-* Make Ruby 1.9 deprecated
+* Stop support for Ruby 1.9
+* Remove `EPUB.included` method. Now including `EPUB` module empowers nothing of EPUB features. Include `EPUB3::Book::Features` instead.
+* Add `EPUB3::Searcher::XHTML::Seamless` and make it default searcher
+* Add `EPUB3::Publication::Package::Manifest#each_nav`
+* Stop to use enumerabler gem
 
 [nokogumbo]: https://github.com/rubys/nokogumbo/
 

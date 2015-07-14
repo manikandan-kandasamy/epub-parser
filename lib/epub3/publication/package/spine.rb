@@ -36,7 +36,7 @@ module EPUB3
         # @return [Enumerator] Enumerator which yeilds {Manifest::Item}
         #   referred by each of {#itemrefs}
         def items
-          itemrefs.collector {|itemref| itemref.item}
+          itemrefs.collect {|itemref| itemref.item}
         end
 
         class Itemref

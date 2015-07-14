@@ -1,3 +1,4 @@
+# coding: utf-8
 require File.expand_path 'helper', File.dirname(__FILE__)
 
 class MyBook
@@ -23,6 +24,27 @@ class TestParser < Test::Unit::TestCase
       EPUB3::Parser.parse('test/fixtures/book.epub', class: MyBook)
     end
     assert_kind_of EPUB3::Book::Features, EPUB3::Parser.parse('test/fixtures/book.epub', class: MyBook)
+  end
+
+  def test_parse_from_file_system
+    adapter = EPUB3::OCF::PhysicalContainer.adapter
+    begin
+      EPUB3::OCF::PhysicalContainer.adapter = :UnpackedDirectory
+      epub = EPUB3::Parser.parse('test/fixtures/book')
+      assert_instance_of EPUB3::Book, epub
+      assert_equal 'Mon premier guide de cuisson, un Mémoire', epub.main_title
+    ensure
+      EPUB3::OCF::PhysicalContainer.adapter = adapter
+    end
+  end
+
+  def test_can_specify_container_adapter_when_parsing_individually
+    epub = EPUB3::Parser.parse('test/fixtures/book', container_adapter: :UnpackedDirectory)
+
+    assert_equal 'Mon premier guide de cuisson, un Mémoire', epub.main_title
+    assert_equal File.read('test/fixtures/book/OPS/nav.xhtml'), epub.nav.read
+    assert_equal EPUB3::OCF::PhysicalContainer::UnpackedDirectory, epub.container_adapter
+    assert_equal EPUB3::OCF::PhysicalContainer::Zipruby, EPUB3::OCF::PhysicalContainer.adapter
   end
 
   class TestBook < TestParser

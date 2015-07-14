@@ -23,14 +23,14 @@ class TestPublication < Test::Unit::TestCase
       refiner = Package::Metadata::Meta.new
       refinee = Package::Metadata::Meta.new
       refiner.refines = refinee
-      assert_same refinee.refiners.first, refiner 
+      assert_same refinee.refiners.first, refiner
     end
 
     def test_link_refines_setter_connect_refinee_to_the_link
       refiner = Package::Metadata::Link.new
       refinee = Package::Metadata::Meta.new
       refiner.refines = refinee
-      assert_same refinee.refiners.first, refiner 
+      assert_same refinee.refiners.first, refiner
     end
 
     def test_title_returns_extended_title_when_it_exists
@@ -184,6 +184,59 @@ class TestPublication < Test::Unit::TestCase
   class TestManifest < TestPublication
     include EPUB3::Publication
 
+    def setup
+      @manifest = EPUB3::Publication::Package::Manifest.new
+      @nav1 = EPUB3::Publication::Package::Manifest::Item.new
+      @nav1.id = 'nav1'
+      @nav1.properties = %w[nav]
+      @nav2 = EPUB3::Publication::Package::Manifest::Item.new
+      @nav2.id = 'nav2'
+      @nav2.properties = %w[nav]
+      @item = EPUB3::Publication::Package::Manifest::Item.new
+      @item.id = 'item'
+      @cover_image = EPUB3::Publication::Package::Manifest::Item.new
+      @cover_image.id = 'cover-image'
+      @cover_image.properties = %w[cover-image]
+      @manifest << @nav1 << @item << @nav2 << @cover_image
+    end
+
+    def test_each_item_returns_enumerator_when_no_block_given
+      assert_instance_of Enumerator, @manifest.each_item
+    end
+
+    def test_each_nav_iterates_over_items_with_nav_property
+      navs = [@nav1, @nav2]
+      i = 0
+      @manifest.each_nav do |nav|
+        assert_same navs[i], nav
+        i += 1
+      end
+    end
+
+    def test_each_nav_returns_iterable_object_when_no_block_given
+      navs = [@nav1, @nav2]
+
+      assert_respond_to @manifest.each_nav, :each
+      @manifest.each_nav.with_index do |nav, i|
+        assert_same navs[i], nav
+      end
+    end
+
+    def test_navs_iterates_over_items_with_nav_property
+      navs = [@nav1, @nav2]
+      @manifest.navs.each_with_index do |nav, i|
+        assert_same navs[i], nav
+      end
+    end
+
+    def test_nav_returns_first_item_with_nav_property
+      assert_same @nav1, @manifest.nav
+    end
+
+    def test_cover_image_returns_item_with_cover_image_property
+      assert_same @cover_image, @manifest.cover_image
+    end
+
     class TestItem < TestManifest
       def test_content_document_returns_nil_when_not_xhtml_nor_svg
         item = EPUB3::Publication::Package::Manifest::Item.new
@@ -227,15 +280,15 @@ class TestPublication < Test::Unit::TestCase
 
       def test_find_item_by_relative_iri_returns_item_which_has_resolved_iri_as_href
         manifest = Package::Manifest.new
-        manifest << xhtml_item = Package::Manifest::Item.new.tap {|item| item.href = Addressable::URI.parse('text/01.xhtml')}
-        manifest << image_item = Package::Manifest::Item.new.tap {|item| item.href = Addressable::URI.parse('image/01.png')}
+        manifest << xhtml_item = Package::Manifest::Item.new.tap {|item| item.href = 'text/01.xhtml'}
+        manifest << image_item = Package::Manifest::Item.new.tap {|item| item.href = 'image/01.png'}
 
         assert_equal image_item, xhtml_item.find_item_by_relative_iri(Addressable::URI.parse('../image/01.png'))
       end
 
       def test_find_item_by_relative_iri_returns_nil_when_no_item_found
         manifest = Package::Manifest.new
-        manifest << xhtml_item = Package::Manifest::Item.new.tap {|item| item.href = Addressable::URI.parse('text/01.xhtml')}
+        manifest << xhtml_item = Package::Manifest::Item.new.tap {|item| item.href = 'text/01.xhtml'}
 
         assert_nil xhtml_item.find_item_by_relative_iri(Addressable::URI.parse('../image/01.png'))
       end
@@ -248,6 +301,21 @@ class TestPublication < Test::Unit::TestCase
         epub = EPUB3::Parser.parse('test/fixtures/book.epub')
         item = epub.package.manifest[id]
         assert_equal encoding, item.read.encoding
+      end
+
+      def test_entry_name_returns_normalized_iri
+        item = Package::Manifest::Item.new
+        item.href = '../style.css'
+        obj = Object.new
+        stub(item).manifest {obj}
+        stub(obj).package {obj}
+        stub(obj).book {obj}
+        stub(obj).ocf {obj}
+        stub(obj).container {obj}
+        stub(obj).rootfile {obj}
+        stub(obj).full_path {Addressable::URI.parse('OPS/contents.opf')}
+
+        assert_equal 'style.css', item.entry_name
       end
     end
   end

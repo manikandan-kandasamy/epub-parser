@@ -46,36 +46,61 @@ class TestSearcher < Test::Unit::TestCase
       @nav = @doc.search('nav').first
     end
 
-    def test_no_result
-      assert_empty EPUB3::Searcher::XHTML::Restricted.search(@h1, 'no result')
+    module TestSearch
+      def test_no_result
+        assert_empty @searcher.search(@h1, 'no result')
+      end
+
+      def test_simple
+        assert_equal results([[[[:text, 0]], [[:character, 9]], [[:character, 16]]]]), @searcher.search(@h1, 'Content')
+      end
+
+      def test_multiple_text_result
+        assert_equal results([[[[:text, 0]], [[:character, 6]], [[:character, 7]]], [[[:text, 0]], [[:character, 10]], [[:character, 11]]]]), @searcher.search(@h1, 'o')
+      end
+
+      def test_text_after_element
+        elem = Nokogiri.XML('<root><elem>inner</elem>after</root>')
+
+        assert_equal results([[[[:text, 1]], [[:character, 0]], [[:character, 5]]]]), @searcher.search(elem, 'after')
+      end
+
+      def test_entity_reference
+        elem = Nokogiri.XML('<root>before&lt;after</root>')
+
+        assert_equal results([[[[:text, 0]], [[:character, 6]], [[:character, 7]]]]), @searcher.search(elem, '<')
+      end
+
+      def test_nested_result
+        assert_equal results([[[[:element, 1, {:name => 'ol', :id => nil}], [:element, 1, {:name => 'li', :id => nil}], [:element, 1, {:name => 'ol', :id => nil}], [:element, 1, {:name => 'li', :id => nil}], [:element, 0, {:name => 'a', :id => nil}], [:text, 0]], [[:character, 0]], [[:character, 3]]]]), @searcher.search(@nav, '第二節')
+      end
+
+      def test_img
+        assert_equal [result([[[:element, 1, {:name => 'ol', :id => nil}], [:element, 1, {:name => 'li', :id => nil}], [:element, 1, {:name => 'ol', :id => nil}], [:element, 2, {:name => 'li', :id => nil}], [:element, 0, {:name => 'a', :id => nil}], [:element, 0, {:name => 'img', :id => nil}]], nil, nil])], @searcher.search(@nav, '第三節')
+      end
     end
 
-    def test_simple
-      assert_equal results([[[[:text, 0]], [[:character, 9]], [[:character, 16]]]]), EPUB3::Searcher::XHTML::Restricted.search(@h1, 'Content')
+    class TestRestricted < self
+      include TestSearch
+
+      def setup
+        super
+        @searcher = EPUB3::Searcher::XHTML::Restricted
+      end
     end
 
-    def test_multiple_text_result
-      assert_equal results([[[[:text, 0]], [[:character, 6]], [[:character, 7]]], [[[:text, 0]], [[:character, 10]], [[:character, 11]]]]), EPUB3::Searcher::XHTML::Restricted.search(@h1, 'o')
-    end
+    class TestSeamless < self
+      include TestSearch
 
-    def test_text_after_element
-      elem = Nokogiri.XML('<root><elem>inner</elem>after</root>')
+      def setup
+        super
+        @searcher = EPUB3::Searcher::XHTML::Seamless
+      end
 
-      assert_equal results([[[[:text, 1]], [[:character, 0]], [[:character, 5]]]]), EPUB3::Searcher::XHTML::Restricted.search(elem, 'after')
-    end
-
-    def test_entity_reference
-      elem = Nokogiri.XML('<root>before&lt;after</root>')
-
-      assert_equal results([[[[:text, 0]], [[:character, 6]], [[:character, 7]]]]), EPUB3::Searcher::XHTML::Restricted.search(elem, '<')
-    end
-
-    def test_nested_result
-      assert_equal results([[[[:element, 1, {:name => 'ol', :id => nil}], [:element, 1, {:name => 'li', :id => nil}], [:element, 1, {:name => 'ol', :id => nil}], [:element, 1, {:name => 'li', :id => nil}], [:element, 0, {:name => 'a', :id => nil}], [:text, 0]], [[:character, 0]], [[:character, 3]]]]), EPUB3::Searcher::XHTML::Restricted.search(@nav, '第二節')
-    end
-
-    def test_img
-      assert_equal [result([[[:element, 1, {:name => 'ol', :id => nil}], [:element, 1, {:name => 'li', :id => nil}], [:element, 1, {:name => 'ol', :id => nil}], [:element, 2, {:name => 'li', :id => nil}], [:element, 0, {:name => 'a', :id => nil}], [:element, 0, {:name => 'img', :id => nil}]], nil, nil])], EPUB3::Searcher::XHTML::Restricted.search(@nav, '第三節')
+      def test_seamless
+        elem = Nokogiri.XML('<root>This <em>includes</em> a child element.</root>')
+        assert_equal results([[[], [[:text, 0], [:character, 0]], [[:text, 1], [:character, 17]]]]), @searcher.search(elem, 'This includes a child element.')
+      end
     end
 
     class TestResult < self

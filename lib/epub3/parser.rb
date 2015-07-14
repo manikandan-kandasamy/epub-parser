@@ -1,6 +1,6 @@
 require 'epub3'
 require 'epub3/constants'
-require 'zipruby'
+require 'epub3/book'
 require 'nokogiri'
 
 module EPUB3
@@ -29,27 +29,39 @@ module EPUB3
       #   For details of options, see below.
       # @option options [EPUB] :book instance of class which includes {EPUB} module
       # @option options [Class] :class class which includes {EPUB} module
+      # @option options [EPUB3::OCF::PhysicalContainer, Symbol] :container_adapter OCF physical container adapter to use when parsing EPUB container
+      #   When class passed, it is used. When symbol passed, it is considered as subclass name of {EPUB3::OCF::PhysicalContainer}.
+      #   If omitted, {EPUB3::OCF::PhysicalContainer.adapter} is used.
       # @return [EPUB] object which is an instance of class including {EPUB} module.
       #   When option :book passed, returns the same object whose attributes about EPUB are set.
       #   When option :class passed, returns the instance of the class.
       #   Otherwise returns {EPUB3::Book} object.
-      def parse(filepath, options = {})
+      def parse(filepath, **options)
         new(filepath, options).parse
       end
     end
 
-    def initialize(filepath, options = {})
-      raise "File #{filepath} not readable" unless File.readable_real? filepath
+    def initialize(filepath, **options)
+      path_is_uri = (options[:container_adapter] == EPUB3::OCF::PhysicalContainer::UnpackedURI or
+                     options[:container_adapter] == :UnpackedURI or
+                     EPUB3::OCF::PhysicalContainer.adapter == EPUB3::OCF::PhysicalContainer::UnpackedURI)
 
-      @filepath = File.realpath filepath
-      @book = create_book options
+      raise "File #{filepath} not readable" if
+        !path_is_uri and !File.readable_real?(filepath)
+
+      @filepath = path_is_uri ? filepath : File.realpath(filepath)
+      @book = create_book(options)
       @book.epub_file = @filepath
+      if options[:container_adapter]
+        adapter = options[:container_adapter]
+        @book.container_adapter = adapter
+      end
     end
 
     def parse
-      Zip::Archive.open @filepath do |zip|
-        @book.ocf = OCF.parse(zip)
-        @book.package = Publication.parse(zip, @book.ocf.container.rootfile.full_path.to_s)
+      @book.container_adapter.open @filepath do |container|
+        @book.ocf = OCF.parse(container)
+        @book.package = Publication.parse(container, @book.rootfile_path)
       end
 
       @book
@@ -64,7 +76,6 @@ module EPUB3
       when params[:class]
         params[:class].new
       else
-        require 'epub3/book'
         Book.new
       end
     end

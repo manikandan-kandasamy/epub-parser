@@ -76,7 +76,7 @@ module EPUB3
             met = voc.gsub(/-/, '_')
             attr_writer met
             define_method met do
-              refiners.selector {|refiner| refiner.property == voc}.first
+              refiners.find {|refiner| refiner.property == voc}
             end
           end
         end
@@ -94,20 +94,20 @@ module EPUB3
         class Identifier < DCMES
           # @note This is ad-hoc
           # @todo Define and include OPF module for opf:scheme attribute
-          # @todo Define generale way to handle with identifier-type refiners
+          # @todo Define general way to handle with identifier-type refiners
           attr_accessor :scheme
 
           # @note This is ad-hoc
           # @todo Define and include OPF module for opf:scheme attribute
-          # @todo Define generale way to handle with identifier-type refiners
+          # @todo Define general way to handle with identifier-type refiners
           def isbn?
+            scheme == 'ISBN' or
+            content.to_s.downcase.start_with? 'urn:isbn' or
             refiners.any? {|refiner|
               refiner.property == 'identifier-type' and
               refiner.scheme == 'onix:codelist5' and
               %w[02 15].include? refiner.content
-            } or
-            scheme == 'ISBN' or
-            content.to_s.downcase.start_with? 'urn:isbn'
+            }
           end
         end
 
@@ -128,8 +128,8 @@ module EPUB3
           attr_reader :refines
 
           def refines=(refinee)
-            @refines = refinee
             refinee.refiners << self
+            @refines = refinee
           end
 
           def refines?
@@ -160,8 +160,8 @@ module EPUB3
           attr_reader :refines
 
           def refines=(refinee)
-            @refines = refinee
             refinee.refiners << self
+            @refines = refinee
           end
         end
       end

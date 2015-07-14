@@ -56,7 +56,7 @@ And {EPUB3::Publication::Package::Manifest::Item Item} provides syntax suger {EP
 
 For several utilities of Item, see {file:docs/Item.markdown} page.
 
-By the way, although `book` above is a {EPUB3::Book} object, all features are provided by {EPUB} module. Therefore YourBook class can include the features of {EPUB}:
+By the way, although `book` above is a {EPUB3::Book} object, all features are provided by {EPUB3::Book::Features} module. Therefore YourBook class can include the features of {EPUB3::Book::Features}:
 
     require 'epub3'
     
@@ -90,16 +90,58 @@ You are also able to find YourBook object for the first:
     ret == book # => true; this API is not good I feel... Welcome suggestion!
     # do something with your book
 
+Documentation
+-------------
+
 More documentations are avaiable in:
 
 * {file:docs/Publication.markdown}
 * {file:docs/Item.markdown}
 * {file:docs/FixedLayout.markdown}
+* {file:docs/Navigation.markdown}
+* {file:docs/Searcher.markdown}
+* {file:docs/UnpackedArchive.markdown}
+* {file:docs/AggregateContentsFromWeb.markdown}
+
+If you installed EPUB Parser via gem command, you can also generate documentaiton by your own([rubygems-yardoc][] gem is needed):
+
+    $ gem install epub-parser
+    $ gem yardoc epub-parser
+    ...
+    Files:          33
+    Modules:        20 (   20 undocumented)
+    Classes:        45 (   44 undocumented)
+    Constants:      31 (   31 undocumented)
+    Methods:       292 (   88 undocumented)
+    52.84% documented
+    YARD documentation is generated to:
+    /path/to/gempath/ruby/2.2.0/doc/epub-parser-0.2.0/yardoc
+
+It will show you path to generated documentation(`/path/to/gempath/ruby/2.2.0/doc/epub-parser-0.2.0/yardoc` here) at the end.
+
+Or, generating yardoc command is possible, too:
+
+    $ git clone https://github.com/KitaitiMakoto/epub-parser.git
+    $ cd epub-parser
+    $ bundle install --path=deps
+    $ bundle exec rake doc:yard
+    ...
+    Files:          33
+    Modules:        20 (   20 undocumented)
+    Classes:        45 (   44 undocumented)
+    Constants:      31 (   31 undocumented)
+    Methods:       292 (   88 undocumented)
+    52.84% documented
+
+Then documentation will be available in `doc` directory.
+
+[homepage]: http://www.rubydoc.info/gems/epub-parser/file/docs/Home.markdown
+[rubygems-yardoc]: https://rubygems.org/gems/rubygems-yardoc
 
 Requirements
 ------------
 
-* Ruby 1.9.3 or later
+* Ruby 2.0.0 or later
 * C compiler to compile Zip/Ruby and Nokogiri
 
 Note

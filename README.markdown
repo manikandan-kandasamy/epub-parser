@@ -2,11 +2,12 @@ EPUB Parser
 ===========
 [![Build Status](https://secure.travis-ci.org/KitaitiMakoto/epub-parser.png?branch=master)](http://travis-ci.org/KitaitiMakoto/epub-parser)
 [![Dependency Status](https://gemnasium.com/KitaitiMakoto/epub-parser.png)](https://gemnasium.com/KitaitiMakoto/epub-parser)
+[![Gem Version](https://badge.fury.io/rb/epub-parser.svg)](http://badge.fury.io/rb/epub-parser)
 
 INSTALLATION
 -------
 
-    gem install epub-parser  
+    gem install epub-parser
 
 USAGE
 -----
@@ -30,7 +31,7 @@ USAGE
 
 See document's {file:docs/Home.markdown} or [API Documentation][rubydoc] for more info.
 
-[rubydoc]: http://rubydoc.info/gems/epub-parser/frames
+[rubydoc]: http://rubydoc.info/gems/epub-parser
 
 ### `epubinfo` command-line tool
 
@@ -90,9 +91,49 @@ IRB starts. `self` becomes the EPUB book and can access to methods of `EPUB`.
 
 See {file:docs/EpubOpen} for more info.
 
+DOCUMENTATION
+-------------
+
+Documentation is available in [homepage][].
+
+If you installed EPUB Parser by gem command, you can also generate documentaiton by your own([rubygems-yardoc][] gem is needed):
+
+    $ gem install epub-parser
+    $ gem yardoc epub-parser
+    ...
+    Files:          33
+    Modules:        20 (   20 undocumented)
+    Classes:        45 (   44 undocumented)
+    Constants:      31 (   31 undocumented)
+    Methods:       292 (   88 undocumented)
+    52.84% documented
+    YARD documentation is generated to:
+    /path/to/gempath/ruby/2.2.0/doc/epub-parser-0.2.0/yardoc
+
+It will show you path to generated documentation(`/path/to/gempath/ruby/2.2.0/doc/epub-parser-0.2.0/yardoc` here) at the end.
+
+Or, generating by yardoc command is possible, too:
+
+    $ git clone https://github.com/KitaitiMakoto/epub-parser.git
+    $ cd epub-parser
+    $ bundle install --path=deps
+    $ bundle exec rake doc:yard
+    ...
+    Files:          33
+    Modules:        20 (   20 undocumented)
+    Classes:        45 (   44 undocumented)
+    Constants:      31 (   31 undocumented)
+    Methods:       292 (   88 undocumented)
+    52.84% documented
+
+Then documentation will be available in `doc` directory.
+
+[homepage]: http://www.rubydoc.info/gems/epub-parser/file/docs/Home.markdown
+[rubygems-yardoc]: https://rubygems.org/gems/rubygems-yardoc
+
 REQUIREMENTS
 ------------
-* Ruby 1.9.3 or later(1.9 is deprecated now)
+* Ruby 2.0.0 or later
 * `patch` command to install Nokogiri
 * C compiler to compile Zip/Ruby and Nokogiri
 
@@ -110,27 +151,38 @@ If you find other gems, please tell me or request a pull request.
 RECENT CHANGES
 --------------
 
+### 0.2.3
+
+* Change the name of physical container adapter for file system: :File -> :UnpackedDirectory
+* Add `EPUB3::Publication::Package::Manifest::Item#full_path`
+* Make #href= acceptable String
+
+### 0.2.2
+
+* [BUGFIX]Item#entry_name returns normalized IRI
+
+### 0.2.1
+
+* Remove deprecated `EPUB3::Constants::MediaType::UnsupportedError`. Use `UnsupportedMediatType` instead.
+* Make it possible to use [archive-zip][] gem to extract contents from EPUB package
+* Add warning about default physical container adapter change
+* Make it possible to extract contents from the web via `EPUB3::OCF::PhysicalContainer::UnpackedURI` See {file:ExtractContentsFromWeb.markdown} for details.
+
+[archive-zip]: https://github.com/javanthropus/archive-zip
+
+### 0.2.0
+
+* Make it possible to parse file system directory as an EPUB file. See {file:docs/UnpackedArchive.markdown} for details.
+
 ### 0.1.9
 
 * Introduce [Nokogumbo][] for XHTML Content Documents
-* Make Ruby 1.9 deprecated
+* Stop support for Ruby 1.9
+* Remove `EPUB.included` method. Now including `EPUB` module empowers nothing of EPUB features. Include `EPUB3::Book::Features` instead.
+* Add `EPUB3::Searcher::XHTML::Seamless` and make it default searcher
+* Add `EPUB3::Publication::Package::Manifest#each_nav`
 
 [nokogumbo]: https://github.com/rubys/nokogumbo/
-
-### 0.1.8
-
-* Explicity #close each zip member file that has been opened via #fopen(Thanks [xunker][]!)
-
-[xunker]: https://github.com/xunker
-
-### 0.1.7.1
-
-* Don't set encoding when content is not text
-
-### 0.1.7
-
-* [Experimental]Add `EPUB3::Searcher` module. See {file:Searcher.markdown} for details
-* Detect and set character encoding in `EPUB3::Publication::Package::Item#read`
 
 See {file:CHANGELOG.markdown} for older changelogs and details.
 
@@ -145,7 +197,6 @@ TODOS
 * Content Document
 * Digital Signature
 * Using SAX on parsing
-* Extracting and organizing common behavior from some classes to modules
 * Abstraction of XML parser(making it possible to use REXML, standard bundled XML library of Ruby)
 * Handle with encodings other than UTF-8
 
@@ -157,6 +208,8 @@ DONE
 * Content Document(only for Navigation Documents)
 * Fixed Layout
 * Vocabulary Association Mechanisms(only for itemref)
+* Archive library abstraction
+* Extracting and organizing common behavior from some classes to modules
 
 LICENSE
 -------

@@ -69,25 +69,20 @@ module EPUB3
             embedded_content = a_or_span.xpath('./xhtml:audio[1]|xhtml:canvas[1]|xhtml:embed[1]|xhtml:iframe[1]|xhtml:img[1]|xhtml:math[1]|xhtml:object[1]|xhtml:svg[1]|xhtml:video[1]', EPUB3::NAMESPACES).first
             unless embedded_content.nil?
               case embedded_content.name
-              when 'audio'
-              when 'canvas'
-              when 'embed'
-              when 'iframe'
+              when 'audio', 'canvas', 'embed', 'iframe'
                 item.text = extract_attribute(embedded_content, 'name') || extract_attribute(embedded_content, 'srcdoc')
               when 'img'
                 item.text = extract_attribute(embedded_content, 'alt')
-              when 'math'
-              when 'object'
+              when 'math', 'object'
                 item.text = extract_attribute(embedded_content, 'name')
-              when 'svg'
-              when 'video'
+              when 'svg', 'video'
               else
               end
             end
             item.text = extract_attribute(a_or_span, 'title').to_s if item.text.nil? || item.text.empty?
           end
-          item.href = Addressable::URI.parse(extract_attribute(a_or_span, 'href'))
-          item.item = @item.manifest.items.selector {|it| it.href.request_uri == item.href.request_uri}.first
+          item.href = extract_attribute(a_or_span, 'href')
+          item.item = @item.manifest.items.find {|it| it.href.request_uri == item.href.request_uri}
         end
         item.items = element.xpath('./xhtml:ol[1]/xhtml:li', EPUB3::NAMESPACES).map {|li| parse_navigation_item(li)}
 

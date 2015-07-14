@@ -1,5 +1,6 @@
 require 'epub3/constants'
 require 'epub3/ocf'
+require 'epub3/ocf/physical_container'
 require 'zipruby'
 require 'nokogiri'
 
@@ -9,25 +10,24 @@ module EPUB3
       include Utils
 
       DIRECTORY = 'META-INF'
-      EPUB3::OCF::MODULES.each {|m| self.const_set "#{m.upcase}_FILE", "#{m}.xml"} # Deprecated
 
       class << self
-        def parse(zip_archive)
-          new(zip_archive).parse
+        def parse(container)
+          new(container).parse
         end
       end
 
-      def initialize(zip_archive)
-        @zip = zip_archive
+      def initialize(container)
+        @container = container
         @ocf = EPUB3::OCF.new
       end
 
       def parse
         EPUB3::OCF::MODULES.each do |m|
           begin
-            data = @zip.fopen(File.join(DIRECTORY, "#{m}.xml")) {|file| file.read}
+            data = @container.read(File.join(DIRECTORY, "#{m}.xml"))
             @ocf.__send__ "#{m}=", __send__("parse_#{m}", data)
-          rescue Zip::Error
+          rescue ::Zip::Error, ::Errno::ENOENT, OpenURI::HTTPError
           end
         end
 

@@ -4,8 +4,8 @@ module EPUB3
   module Searcher
     class Publication
       class << self
-        def search(package, word)
-          new(word).search(package)
+        def search(package, word, **options)
+          new(word).search(package, options)
         end
       end
 
@@ -13,14 +13,14 @@ module EPUB3
         @word = word
       end
 
-      def search(package)
+      def search(package, algorithm: :seamless)
         results = []
 
         spine = package.spine
         spine_step = Result::Step.new(:element, 2, {:name => 'spine', :id => spine.id})
         spine.each_itemref.with_index do |itemref, index|
           itemref_step = Result::Step.new(:itemref, index, {:id => itemref.id})
-          XHTML::Restricted.search(Nokogiri.XML(itemref.item.read), @word).each do |sub_result|
+          XHTML::ALGORITHMS[algorithm].search(Nokogiri.XML(itemref.item.read), @word).each do |sub_result|
             results << Result.new([spine_step, itemref_step] + sub_result.parent_steps, sub_result.start_steps, sub_result.end_steps)
           end
         end

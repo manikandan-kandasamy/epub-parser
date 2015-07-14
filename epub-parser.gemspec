@@ -7,10 +7,11 @@ Gem::Specification.new do |s|
   s.version     = EPUB3::Parser::VERSION
   s.authors     = ["KITAITI Makoto"]
   s.email       = ["KitaitiMakoto@gmail.com"]
-  s.homepage    = "https://github.com/KitaitiMakoto/epub-parser"
+  s.homepage    = "http://www.rubydoc.info/gems/epub-parser/file/docs/Home.markdown"
   s.summary     = %q{EPUB 3 Parser}
   s.description = %q{Parse EPUB 3 book loosely}
   s.license     = 'MIT'
+  s.required_ruby_version = '> 2'
 
   s.files         = `git ls-files`.split("\n")
                     .push('test/fixtures/book/OPS/ルートファイル.opf')
@@ -25,23 +26,22 @@ Gem::Specification.new do |s|
   s.has_rdoc = 'yard'
 
   s.add_development_dependency 'rake'
+  s.add_development_dependency 'archive-zip'
   s.add_development_dependency 'pry'
   s.add_development_dependency 'pry-doc'
   s.add_development_dependency 'test-unit'
   s.add_development_dependency 'test-unit-rr'
   s.add_development_dependency 'test-unit-notify'
   s.add_development_dependency 'simplecov'
-  s.add_development_dependency 'thin'
   s.add_development_dependency 'yard'
   s.add_development_dependency 'gem-man'
   s.add_development_dependency 'ronn'
   s.add_development_dependency 'epzip'
   s.add_development_dependency 'aruba'
 
-  s.add_runtime_dependency 'enumerabler'
   s.add_runtime_dependency 'zipruby'
   s.add_runtime_dependency 'nokogiri', '~> 1.6'
   s.add_runtime_dependency 'nokogumbo'
   s.add_runtime_dependency 'addressable', '>= 2.3.5'
-  s.add_runtime_dependency 'rchardet'
+  s.add_runtime_dependency 'rchardet', '>= 1.6.1'
 end

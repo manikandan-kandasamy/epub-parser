@@ -9,37 +9,45 @@ module EPUB3
       end
 
       def toc
-        navigations.selector {|nav| nav.type == Navigation::Type::TOC}.first
+        navigations.find(&:toc?)
       end
 
       def page_list
-        navigations.selector {|nav| nav.type == Nagivation::Type::PAGE_LIST}.first
+        navigations.find(&:page_list?)
       end
 
       def landmarks
-        navigations.selector {|nav| nav.type == Navigation::Type::LANDMARKS}.first
+        navigations.find(&:landmarks?)
       end
 
       # Enumerator version of toc
-      #  Usage: nagivation.enum_for(:contents)
       def contents
+        enum_for(:each_content).to_a
       end
 
       # Enumerator version of page_list
       #  Usage: navigation.enum_for(:pages)
       def pages
+        raise NotImplementedError
       end
+
+      # @todo Enumerator version of landmarks
 
       # iterator for #toc
       def each_content
+        toc.traverse do |content, _|
+          yield content
+        end
       end
 
       # iterator for #page_list
       def each_page
+        raise NotImplementedError
       end
 
       # iterator for #landmark
       def each_landmark
+        raise NotImplementedError
       end
 
       def navigation
@@ -62,11 +70,16 @@ module EPUB3
         include Hidable
 
         attr_accessor :items, :text,
-                      :content_document, :href, :item
+                      :content_document, :item
+        attr_reader :href
 
         def initialize
           @items = ItemList.new
           @items.parent = self
+        end
+
+        def href=(iri)
+          @href = iri.kind_of?(Addressable::URI) ? iri : Addressable::URI.parse(iri)
         end
 
         def traverse(depth=0, &block)
@@ -89,6 +102,12 @@ module EPUB3
         alias navigations= items=
         alias heading text
         alias heading= text=
+
+        %w[toc page_list landmarks].each do |type|
+          define_method "#{type}?" do
+            type == Type.const_get(type.upcase)
+          end
+        end
       end
 
       class ItemList < Array

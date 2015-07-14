@@ -1,5 +1,5 @@
 require 'set'
-require 'enumerabler'
+require 'addressable/uri'
 require 'rchardet'
 require 'epub3/constants'
 require 'epub3/parser/content_document'
@@ -24,8 +24,18 @@ module EPUB3
           self
         end
 
+        def each_nav
+          if block_given?
+            each_item do |item|
+              yield item if item.nav?
+            end
+          else
+            each_item.lazy.select(&:nav?)
+          end
+        end
+
         def navs
-          items.selector(&:nav?)
+          items.select(&:nav?)
         end
 
         def nav
@@ -33,12 +43,16 @@ module EPUB3
         end
 
         def cover_image
-          items.selector(&:cover_image?).first
+          items.select(&:cover_image?).first
         end
 
         def each_item
-          @items.each_value do |item|
-            yield item
+          if block_given?
+            @items.each_value do |item|
+              yield item
+            end
+          else
+            @items.each_value
           end
         end
 
@@ -51,6 +65,8 @@ module EPUB3
         end
 
         class Item
+          DUMMY_ROOT_IRI = Addressable::URI.parse('http://example.net/').freeze
+
           include Inspector
 
           # @!attribute [rw] manifest
@@ -69,8 +85,8 @@ module EPUB3
           # @!attribute [rw] fallback
           #   @return [Item] Returns the value of attribute fallback
           attr_accessor :manifest,
-                        :id, :href, :media_type, :fallback, :media_overlay
-          attr_reader :properties
+                        :id, :media_type, :fallback, :media_overlay
+          attr_reader :properties, :href
 
           def initialize
             @properties = Set.new
@@ -80,21 +96,35 @@ module EPUB3
             @properties = props.kind_of?(Set) ? props : Set.new(props)
           end
 
+          def href=(iri)
+            @href = iri.kind_of?(Addressable::URI) ? iri : Addressable::URI.parse(iri)
+          end
+
           # @todo Handle circular fallback chain
           def fallback_chain
             @fallback_chain ||= traverse_fallback_chain([])
           end
 
           # full path in archive
-          def entry_name
+          # @return [Addressable::URI]
+          def full_path
+            return @full_path if @full_path
             rootfile = manifest.package.book.ocf.container.rootfile.full_path
-            Addressable::URI.unescape(rootfile + href.normalize.request_uri)
+            path = DUMMY_ROOT_IRI + rootfile + href
+            path.scheme = nil
+            path.host = nil
+            path.path = path.path[1..-1]
+            @full_path = path
+          end
+
+          # full path in archive
+          # @return [String]
+          def entry_name
+            Addressable::URI.unencode(full_path)
           end
 
           def read
-            raw_content = Zip::Archive.open(manifest.package.book.epub_file) {|zip|
-              zip.fopen(entry_name) {|member| member.read}
-            }
+            raw_content = manifest.package.book.container_adapter.read(manifest.package.book.epub_file, entry_name)
 
             unless media_type.start_with?('text/') or
                 media_type.end_with?('xml') or
