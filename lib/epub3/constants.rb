@@ -37,6 +37,15 @@ module EPUB3
       text/css
       text/javascript
     ]
-    CORE = IMAGE + APPLICATION + AUDIO + TEXT
+    FONT = %w[
+      font/ttf
+      font/opentype
+      application/x-font-otf
+      application/x-font-ttf
+      application/x-font-opentype
+      application/font-woff
+      application/vnd.ms-fontobject
+    ]
+    CORE = IMAGE + APPLICATION + AUDIO + TEXT + FONT
   end
 end

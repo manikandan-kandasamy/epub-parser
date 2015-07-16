@@ -169,6 +169,10 @@ module EPUB3
             'text/css' == media_type
           end
 
+          def font?
+            EPUB3::MediaType::FONT.include?(media_type)
+          end
+
           alias javascript? js?
           alias stylesheet? css?
 
