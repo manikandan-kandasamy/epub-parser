@@ -95,6 +95,10 @@ module EPUB3
 
       alias javascripts js
 
+      def font
+        resources.select(&:font?)
+      end
+
       def text
         resources.select(&:text?)
       end
