@@ -45,6 +45,7 @@ module EPUB3
       application/x-font-opentype
       application/font-woff
       application/vnd.ms-fontobject
+      application/vnd.ms-opentype
     ]
     CORE = IMAGE + APPLICATION + AUDIO + TEXT + FONT
   end
